@@ -5,13 +5,11 @@ import { getUpcomingDraws, getUserWinnings } from "@/utils/dashboard/queries"
 import { Button } from "@/components/ui/button"
 import { Trophy, LogOut, User, Bell } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
-import { ScoreEntryForm } from "@/components/scores/ScoreEntryForm"
-import { ScoreHistory } from "@/components/scores/ScoreHistory"
-import { ScoreBallGrid } from "@/components/dashboard/ScoreBallGrid"
 import { CharityImpactCard } from "@/components/dashboard/CharityImpactCard"
 import { ParticipationSummary } from "@/components/dashboard/ParticipationSummary"
 import { WinningsBanner } from "@/components/dashboard/WinningsBanner"
 import { SubscriptionStatus } from "@/components/dashboard/SubscriptionStatus"
+import { ScoreManagement } from "@/components/dashboard/ScoreManagement"
 import { cn } from "@/lib/utils"
 
 export default async function DashboardPage() {
@@ -58,7 +56,7 @@ export default async function DashboardPage() {
               <div className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary border-2 border-background" />
             </button>
             
-            <div className="h-8 w-[1px] bg-white/10 mx-2" />
+            <div className="h-8 w-px bg-white/10 mx-2" />
             
             <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-1.5 pr-4 rounded-full">
                <div className="h-8 w-8 rounded-full bg-primary-gradient flex items-center justify-center text-[10px] font-black text-primary-foreground">
@@ -94,28 +92,13 @@ export default async function DashboardPage() {
           {/* Left Column (8 units) */}
           <div className="lg:col-span-8 space-y-12">
             
-            {/* Score Grid Section */}
-            <section className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <ScoreBallGrid 
-                scores={summary?.top5 || []} 
-                average={summary?.average || 0}
-                needed={summary?.needed || 5}
-              />
-            </section>
-
-            {/* Score Management / Entry Section */}
-            <section className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="grid gap-8 md:grid-cols-2">
-                <div className="md:col-span-2">
-                  <ScoreEntryForm isSubscribed={isSubscribed} />
-                </div>
-              </div>
-            </section>
-
-            {/* Score History Section */}
-            <section className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <ScoreHistory scores={scores} />
-            </section>
+            {/* Unified Score Management Section */}
+            <ScoreManagement 
+              initialScores={summary?.top5 || []}
+              average={summary?.average || 0}
+              needed={summary?.needed || 5}
+              isSubscribed={isSubscribed}
+            />
           </div>
 
           {/* Right Column (4 units) */}

@@ -26,12 +26,13 @@ export async function getRollingTop5Summary() {
 
   if (!user) return null
 
-  // Fetch all scores for the user
+  // Fetch only the latest 5 scores for the user
   const { data: scores, error } = await supabase
     .from('scores')
-    .select('score')
+    .select('id, score, played_at')
     .eq('user_id', user.id)
     .order('played_at', { ascending: false })
+    .limit(5)
 
   if (error || !scores || scores.length === 0) {
     return {
@@ -42,18 +43,14 @@ export async function getRollingTop5Summary() {
     }
   }
 
-  // Rolling Top 5 logic:
-  // Usually in golf, it's the average of the best 8 of the last 20.
-  // For this charity platform, we use the average of the BEST 5 scores ever submitted.
-  const sortedScores = [...scores].sort((a, b) => a.score - b.score)
-  const top5 = sortedScores.slice(0, 5)
-  const sum = top5.reduce((acc, s) => acc + s.score, 0)
-  const average = top5.length > 0 ? sum / top5.length : 0
+  // Calculate sum and average of the retained scores
+  const sum = scores.reduce((acc, s) => acc + s.score, 0)
+  const average = scores.length > 0 ? sum / scores.length : 0
 
   return {
     average: parseFloat(average.toFixed(1)),
     count: scores.length,
     needed: Math.max(0, 5 - scores.length),
-    top5: top5.map(s => s.score)
+    top5: scores // This is already the latest 5 in reverse chronological order
   }
 }
