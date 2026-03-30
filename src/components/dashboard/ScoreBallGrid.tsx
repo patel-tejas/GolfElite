@@ -65,37 +65,51 @@ export function ScoreBallGrid({ scores, average, needed }: ScoreBallGridProps) {
           >
             {/* The "Golf Ball" Shadow/Glow */}
             <div className={cn(
-              "absolute inset-0 rounded-full blur-xl transition-all duration-500 opacity-20",
-              score ? "bg-primary group-hover:opacity-40" : "bg-muted"
+              "absolute inset-0 rounded-full blur-2xl transition-all duration-700 opacity-0 group-hover:opacity-30",
+              score ? "bg-primary" : "bg-muted"
             )} />
 
-            {/* The "Golf Ball" Surface */}
+            {/* Luxurious Golf Ball Container */}
             <div className={cn(
-              "relative h-full w-full rounded-full flex items-center justify-center border-2 transition-all duration-300",
-              "bg-linear-to-b from-white/10 to-white/5 backdrop-blur-md",
+              "relative h-full w-full rounded-full flex items-center justify-center transition-all duration-500",
               score 
-                ? "border-primary/40 shadow-[inset_0_2px_10px_rgba(255,255,255,0.1)] group-hover:scale-105 group-hover:border-primary" 
-                : "border-dashed border-muted-foreground/20 opacity-40"
+                ? "group-hover:scale-110 drop-shadow-2xl" 
+                : "opacity-40 grayscale group-hover:grayscale-0 group-hover:scale-105"
             )}>
-              {score ? (
-                <div className="flex flex-col items-center">
-                  <span className="text-xl md:text-3xl font-black tracking-tighter text-foreground">
-                    {score}
-                  </span>
-                  <div className="h-1 w-4 bg-primary/40 rounded-full mt-0.5" />
-                </div>
-              ) : (
-                <Plus className="h-5 w-5 text-muted-foreground/40" />
-              )}
-              
-              {/* Dimple Pattern Effect (Subtle) */}
-              <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[radial-gradient(circle_at_center,_transparent_0.5px,_black_0.5px)] bg-[length:4px_4px]" />
+              {/* Asset-Based Golf Ball */}
+              <img 
+                src="/assets/golf-ball.png"
+                alt="Golf Ball"
+                className={cn(
+                  "absolute inset-0 h-full w-full object-contain mix-blend-multiply transition-transform duration-700 group-hover:rotate-12",
+                  !score && "opacity-60"
+                )}
+              />
+
+              {/* Score Overlay */}
+              <div className="relative z-10 flex flex-col items-center">
+                {score ? (
+                  <>
+                    <span className="text-2xl md:text-4xl font-black tracking-tighter text-slate-900 drop-shadow-sm leading-none">
+                      {score}
+                    </span>
+                    <div className="h-0.5 w-6 bg-slate-900/20 rounded-full mt-1" />
+                  </>
+                ) : (
+                  <Plus className="h-6 w-6 text-slate-500/50" />
+                )}
+              </div>
             </div>
 
             {/* Rank Label */}
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2">
-              <span className="px-2 py-0.5 rounded-full bg-background border border-border text-[8px] font-black uppercase tracking-tighter shadow-sm">
-                #{index + 1}
+            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 z-20">
+              <span className={cn(
+                "px-2 py-0.5 rounded-full border text-[9px] font-black uppercase tracking-tighter shadow-xl transition-colors duration-300",
+                score 
+                  ? "bg-slate-900 text-white border-primary/20" 
+                  : "bg-background text-muted-foreground border-border"
+              )}>
+                SLOT {index + 1}
               </span>
             </div>
           </motion.div>
