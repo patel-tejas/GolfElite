@@ -1,0 +1,3 @@
+﻿src/app/page.tsx(4,18): error TS2305: Module '"lucide-react"' has no exported member 'GolfCourse'.
+src/components/mode-toggle.tsx(20,28): error TS2322: Type '{ children: Element; asChild: true; }' is not assignable to type 'IntrinsicAttributes & Props<unknown>'.
+  Property 'asChild' does not exist on type 'IntrinsicAttributes & Props<unknown>'.
