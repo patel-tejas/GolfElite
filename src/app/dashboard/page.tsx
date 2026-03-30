@@ -1,127 +1,159 @@
 import { createClient } from "@/utils/supabase/server"
 import { signout } from "@/app/(auth)/actions"
-import { createPortalSession } from "@/utils/stripe/server-actions"
+import { getUserScores, getRollingTop5Summary } from "@/utils/scores/queries"
+import { getUpcomingDraws, getUserWinnings } from "@/utils/dashboard/queries"
 import { Button } from "@/components/ui/button"
-import { buttonVariants } from "@/components/ui/button-variants"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
-import { Trophy, LogOut, CreditCard, CheckCircle2, AlertCircle, ShoppingCart } from "lucide-react"
+import { Trophy, LogOut, User, Bell } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
+import { ScoreEntryForm } from "@/components/scores/ScoreEntryForm"
+import { ScoreHistory } from "@/components/scores/ScoreHistory"
+import { ScoreBallGrid } from "@/components/dashboard/ScoreBallGrid"
+import { CharityImpactCard } from "@/components/dashboard/CharityImpactCard"
+import { ParticipationSummary } from "@/components/dashboard/ParticipationSummary"
+import { WinningsBanner } from "@/components/dashboard/WinningsBanner"
+import { SubscriptionStatus } from "@/components/dashboard/SubscriptionStatus"
 import { cn } from "@/lib/utils"
-import Link from "next/link"
 
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  // We are guaranteed a user here because of middleware.ts
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Fetch the profile for subscription status
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user?.id)
     .single()
 
-  const isSubscribed = profile?.is_subscribed ?? false
+  // For now, we don't restrict access
+  const isSubscribed = true 
+  const actualSubscriptionStatus = profile?.is_subscribed ?? false
+
+  // Fetch all dashboard data
+  const scores = await getUserScores()
+  const summary = await getRollingTop5Summary()
+  const upcomingDraws = await getUpcomingDraws()
+  const winnings = await getUserWinnings()
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <header className="sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-        <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
-          <div className="flex items-center gap-2 font-heading font-bold text-lg">
-            <Trophy className="h-5 w-5 text-primary" />
-            <span className="hidden sm:inline">FairwayImpact</span>
-            <span className="sm:hidden text-primary">FI</span>
+    <div className="flex flex-col min-h-screen bg-[url('/grain.png')] bg-repeat selection:bg-primary/30">
+      {/* Premium Header */}
+      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl">
+        <div className="container flex h-20 max-w-screen-2xl items-center justify-between px-6 md:px-12">
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-xl bg-primary-gradient flex items-center justify-center shadow-lg shadow-primary/20">
+               <Trophy className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <div className="flex flex-col -space-y-1">
+              <span className="text-xl font-black tracking-tighter bg-gold-gradient bg-clip-text text-transparent uppercase">Fairway</span>
+              <span className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase opacity-60">Charity Elite</span>
+            </div>
           </div>
-          <div className="flex flex-1 items-center justify-end space-x-4">
+
+          <div className="flex items-center gap-4">
+            <button className="p-2 rounded-full hover:bg-white/5 transition-colors relative">
+              <Bell className="h-5 w-5 text-muted-foreground" />
+              <div className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary border-2 border-background" />
+            </button>
+            
+            <div className="h-8 w-[1px] bg-white/10 mx-2" />
+            
+            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-1.5 pr-4 rounded-full">
+               <div className="h-8 w-8 rounded-full bg-primary-gradient flex items-center justify-center text-[10px] font-black text-primary-foreground">
+                 {user?.email?.[0].toUpperCase()}
+               </div>
+               <span className="text-xs font-black tracking-tight hidden sm:inline">{user?.email?.split('@')[0]}</span>
+            </div>
+            
             <ModeToggle />
+            
             <form action={signout}>
-              <Button type="submit" variant="ghost" size="sm" className="gap-2">
-                <LogOut className="h-4 w-4" />
-                <span className="hidden xs:inline">Sign Out</span>
+              <Button type="submit" variant="ghost" size="icon" className="rounded-full hover:bg-rose-500/10 hover:text-rose-500">
+                <LogOut className="h-5 w-5" />
               </Button>
             </form>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 p-4 md:p-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <header className="space-y-2 animate-slide-up">
-            <h1 className="text-3xl font-heading font-bold">
-              Welcome back, {user?.email?.split('@')[0]}
-            </h1>
-            <p className="text-muted-foreground">Manage your golf performance and charity impact.</p>
-          </header>
-          
-          <div className="grid gap-6 md:grid-cols-2">
-            <Card className="glass-panel animate-fade-in flex flex-col" style={{ animationDelay: '0.1s' }}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl">Subscription Status</CardTitle>
-                  {isSubscribed ? (
-                    <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                  ) : (
-                    <AlertCircle className="h-5 w-5 text-amber-500" />
-                  )}
-                </div>
-                <CardDescription>Your current plan and payment details.</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                {isSubscribed ? (
-                  <div className="space-y-3">
-                    <div className="bg-emerald-500/10 text-emerald-500 p-4 rounded-xl border border-emerald-500/20 flex flex-col gap-1">
-                      <span className="font-bold text-lg">Active Subscription</span>
-                      <span className="text-xs opacity-80">You are eligible for all active draws.</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="bg-amber-500/10 text-amber-500 p-4 rounded-xl border border-amber-500/20 flex flex-col gap-1">
-                      <span className="font-bold text-lg">Not Subscribed</span>
-                      <span className="text-xs opacity-80">Subscribe to enter scores and win rewards.</span>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-              <CardFooter className="pt-2">
-                {isSubscribed ? (
-                  <form action={createPortalSession} className="w-full">
-                    <Button variant="outline" className="w-full gap-2 h-11 border-primary/20 bg-primary/5 hover:bg-primary/10">
-                      <CreditCard className="h-4 w-4" />
-                      Manage Subscription
-                    </Button>
-                  </form>
-                ) : (
-                  <Link 
-                    href="/dashboard/subscribe" 
-                    className={cn(buttonVariants({ className: "w-full btn-primary-gradient gap-2 h-11 shadow-lg shadow-primary/20" }))}
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                    Get Started - Explore Plans
-                  </Link>
-                )}
-              </CardFooter>
-            </Card>
+      <main className="flex-1 w-full max-w-screen-2xl mx-auto p-6 md:p-12 space-y-12">
+        {/* Row 1: Winnings Banner (Full Width) */}
+        <section className="animate-slide-up">
+           <WinningsBanner 
+             totalWon={winnings.total} 
+             currentBalance={winnings.balance} 
+             status={winnings.status as any} 
+           />
+        </section>
 
-            {/* Placeholder for Score Tracking - Phase 4 */}
-            <Card className="glass-panel animate-fade-in bg-muted/30 border-dashed" style={{ animationDelay: '0.2s' }}>
-              <CardHeader>
-                <CardTitle className="text-xl opacity-50">Score Tracker</CardTitle>
-                <CardDescription>View your rolling top 5 scores.</CardDescription>
-              </CardHeader>
-              <CardContent className="flex items-center justify-center h-[120px]">
-                <div className="text-muted-foreground text-sm text-center">
-                  <Trophy className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                  Coming in Phase 4
+        {/* Row 2: Main Content Grid */}
+        <div className="grid gap-8 lg:grid-cols-12">
+          
+          {/* Left Column (8 units) */}
+          <div className="lg:col-span-8 space-y-12">
+            
+            {/* Score Grid Section */}
+            <section className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <ScoreBallGrid 
+                scores={summary?.top5 || []} 
+                average={summary?.average || 0}
+                needed={summary?.needed || 5}
+              />
+            </section>
+
+            {/* Score Management / Entry Section */}
+            <section className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="grid gap-8 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <ScoreEntryForm isSubscribed={isSubscribed} />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </section>
+
+            {/* Score History Section */}
+            <section className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <ScoreHistory scores={scores} />
+            </section>
           </div>
+
+          {/* Right Column (4 units) */}
+          <aside className="lg:col-span-4 space-y-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            
+            {/* Charity Section */}
+            <CharityImpactCard 
+              charityName={profile?.charity_name} 
+              percentage={profile?.contribution_percentage} 
+            />
+
+            {/* Participation Section */}
+            <ParticipationSummary 
+              draws={upcomingDraws.map(d => ({
+                id: d.id,
+                title: d.title,
+                date: new Date(d.draw_date).toLocaleDateString(),
+                prize: `$${d.prize_pool.toLocaleString()}`,
+                status: 'upcoming'
+              }))} 
+            />
+
+            {/* Subscription Summary (Slim Sidebar Version) */}
+            <SubscriptionStatus 
+              isSubscribed={actualSubscriptionStatus} 
+              renewalDate={profile?.subscription_renewal_date} 
+            />
+          </aside>
         </div>
       </main>
+
+      {/* Footer Branding */}
+      <footer className="py-12 border-t border-white/5 text-center">
+        <div className="flex flex-col items-center gap-2 opacity-20 hover:opacity-40 transition-opacity">
+          <Trophy className="h-4 w-4" />
+          <span className="text-[10px] font-black uppercase tracking-[0.4em]">Fairway Impact Prestige</span>
+        </div>
+      </footer>
     </div>
   )
 }

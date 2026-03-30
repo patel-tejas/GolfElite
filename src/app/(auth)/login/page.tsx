@@ -6,17 +6,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Trophy } from "lucide-react"
 import Link from "next/link"
 
-export default async function LoginPage(props: { searchParams: Promise<{ error?: string }> }) {
-  const searchParams = await props.searchParams
+export default async function LoginPage(props: { searchParams: Promise<{ error?: string; message?: string }> }) {
+  const { error, message } = await props.searchParams
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="absolute inset-0 z-[-1] bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
-      
-      <div className="w-full max-w-md animate-slide-up">
-        
-        <div className="mb-8 flex justify-center items-center gap-2 font-heading font-bold text-2xl">
-          <Trophy className="h-6 w-6 text-primary" />
-          <span>FairwayImpact</span>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="mb-8 flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2 font-heading font-bold text-3xl">
+            <Trophy className="h-8 w-8 text-primary" />
+            <span className="text-gradient-gold">FairwayImpact</span>
+          </div>
+          <p className="text-muted-foreground text-sm">Where every stroke counts for a cause.</p>
         </div>
 
         <Card className="glass-panel w-full relative overflow-hidden">
@@ -54,16 +54,22 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                 />
               </div>
 
-              {searchParams.error && (
-                <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md animate-fade-in border border-destructive/20 mt-2">
-                  {searchParams.error}
+              {(error || message) && (
+                <div className={`p-4 rounded-lg flex items-start gap-3 text-sm animate-in fade-in slide-in-from-top-2 duration-300 ${
+                  error ? "bg-destructive/10 border border-destructive/20 text-destructive" :
+                  "bg-primary/10 border border-primary/20 text-primary"
+                }`}>
+                  <div className="shrink-0 mt-0.5">
+                    {error ? "⚠️" : "ℹ️"}
+                  </div>
+                  <p>{error || message}</p>
                 </div>
               )}
             </CardContent>
             
             <CardFooter className="flex flex-col gap-4">
-              <Button formAction={login} className="w-full btn-primary-gradient">
-                Sign In
+              <Button type="submit" formAction={login} className="w-full btn-premium">
+                Enter the Clubhouse
               </Button>
               
               <div className="text-center text-sm text-muted-foreground">
