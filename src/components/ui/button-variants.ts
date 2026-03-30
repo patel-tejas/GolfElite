@@ -6,6 +6,8 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        premium: "btn-premium text-primary-foreground shadow-lg hover:shadow-primary/20",
+        gold: "bg-gradient-to-br from-gold via-gold to-gold/80 text-gold-foreground font-bold shadow-lg hover:brightness-110",
         outline:
           "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
