@@ -36,12 +36,12 @@ export function DrawDemo() {
           {/* User Scores */}
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-widest text-zinc-500">Your Recent Top 5 Scores</h4>
-            <div className="flex justify-center gap-4 sm:gap-8">
+            <div className="flex justify-center gap-2 sm:gap-4 md:gap-8">
               {myScores.map((score, i) => (
                 <div key={i} className="flex flex-col items-center gap-3">
                   <motion.div 
                     animate={activeStep > i && matches[i] ? { scale: 1.1, borderColor: "var(--color-accent)" } : {}}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/5 border-2 border-white/10 flex items-center justify-center font-heading font-black text-2xl text-white shadow-2xl transition-colors duration-500"
+                    className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-white/5 border-2 border-white/10 flex items-center justify-center font-heading font-black text-lg sm:text-2xl text-white shadow-2xl transition-colors duration-500"
                   >
                     {score}
                   </motion.div>
@@ -57,13 +57,13 @@ export function DrawDemo() {
           {/* Draw Numbers */}
           <div className="space-y-6">
             <h4 className="text-sm font-bold uppercase tracking-widest text-zinc-500">Draw Result Numbers</h4>
-            <div className="flex justify-center gap-4 sm:gap-8">
+            <div className="flex justify-center gap-2 sm:gap-4 md:gap-8">
               {drawNumbers.map((num, i) => (
                 <div key={i} className="flex flex-col items-center gap-3">
                   <motion.div 
                     initial={{ scale: 0, opacity: 0 }}
                     animate={activeStep > i ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 border-2 border-white/20 flex items-center justify-center font-heading font-black text-2xl text-accent shadow-2xl"
+                    className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-2xl bg-white/10 border-2 border-white/20 flex items-center justify-center font-heading font-black text-lg sm:text-2xl text-accent shadow-2xl"
                   >
                     {num}
                   </motion.div>

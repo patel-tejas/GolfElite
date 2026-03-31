@@ -85,7 +85,7 @@ export function CharityImpactSection() {
           >
             <div className="mb-12">
                <span className="text-sm font-bold text-zinc-500 uppercase tracking-widest block mb-4">Total Donated So Far</span>
-               <div className="text-7xl md:text-8xl font-heading font-black text-white tabular-nums tracking-tighter">
+               <div className="text-5xl sm:text-6xl md:text-8xl font-heading font-black text-white tabular-nums tracking-tighter">
                  ${count.toLocaleString('en-US')}
                </div>
             </div>

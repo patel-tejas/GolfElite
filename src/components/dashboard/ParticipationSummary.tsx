@@ -73,13 +73,13 @@ export function ParticipationSummary({ draws = [] }: ParticipationSummaryProps) 
                 : 'bg-white/5 border-white/10 hover:border-primary/20 hover:bg-white/10'
               }`}
             >
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-muted/50 flex flex-col items-center justify-center border border-border/50">
-                  <span className="text-[10px] font-black leading-none">APR</span>
-                  <span className="text-sm font-black text-primary">15</span>
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg bg-muted/50 flex flex-col items-center justify-center border border-border/50 shrink-0">
+                  <span className="text-[9px] sm:text-[10px] font-black leading-none">APR</span>
+                  <span className="text-xs sm:text-sm font-black text-primary">15</span>
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold leading-none">{draw.title}</h4>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-sm font-bold leading-none truncate">{draw.title}</h4>
                   <p className="text-[10px] font-medium text-muted-foreground mt-1 uppercase tracking-tighter">
                     Prize: {draw.prize}
                   </p>

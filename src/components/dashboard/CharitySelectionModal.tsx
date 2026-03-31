@@ -56,25 +56,25 @@ export function CharitySelectionModal({ charities, currentCharityId, trigger }: 
           )
         }
       />
-      <DialogContent className="max-w-[95vw] lg:max-w-6xl bg-background/80 backdrop-blur-3xl border-white/10 p-0 overflow-hidden shadow-2xl rounded-3xl">
+      <DialogContent className="max-w-[95vw] lg:max-w-6xl bg-background/80 backdrop-blur-3xl border-white/10 p-0 overflow-hidden shadow-2xl rounded-2xl sm:rounded-3xl">
         <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
           <Heart className="h-64 w-64 text-rose-500" />
         </div>
 
-        <DialogHeader className="p-10 pb-6">
+        <DialogHeader className="p-4 sm:p-10 pb-4 sm:pb-6">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 shadow-lg shadow-rose-500/10">
+            <div className="p-2 sm:p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 shadow-lg shadow-rose-500/10">
               <Sparkles className="h-4 w-4 text-rose-500" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-rose-500">Global Impact Network</span>
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] text-rose-500">Global Impact Network</span>
           </div>
-          <DialogTitle className="text-4xl font-black tracking-tight uppercase italic drop-shadow-sm text-balance">Select Your Impact Partner</DialogTitle>
-          <DialogDescription className="text-muted-foreground max-w-2xl text-sm font-medium leading-relaxed mt-2 text-balance">
-            Choose a foundation to support with every performance. 10% of your contributions go directly to your chosen cause. Join a community of purpose-driven athletes.
+          <DialogTitle className="text-2xl sm:text-4xl font-black tracking-tight uppercase italic drop-shadow-sm text-balance">Select Your Impact Partner</DialogTitle>
+          <DialogDescription className="text-muted-foreground max-w-2xl text-xs sm:text-sm font-medium leading-relaxed mt-2 text-balance">
+            Choose a foundation to support. 10% of your contributions go directly to your chosen cause.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-10 pb-10 overflow-y-auto max-h-[75vh] custom-scrollbar">
+        <div className="px-4 pb-4 sm:px-10 sm:pb-10 overflow-y-auto max-h-[60vh] sm:max-h-[75vh] custom-scrollbar">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {charities.map((charity) => {
               const isSelected = selectedId === charity.id
@@ -115,7 +115,7 @@ export function CharitySelectionModal({ charities, currentCharityId, trigger }: 
                     </div>
                   </div>
 
-                  <div className="p-6 space-y-3">
+                  <div className="p-4 sm:p-6 space-y-2 sm:space-y-3">
                     <h4 className="font-black text-base uppercase tracking-tight group-hover:text-rose-500 transition-colors">{charity.name}</h4>
                     <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-3 font-medium opacity-80 group-hover:opacity-100 transition-opacity">
                       {charity.description}
@@ -136,12 +136,12 @@ export function CharitySelectionModal({ charities, currentCharityId, trigger }: 
           </div>
         </div>
 
-        <div className="p-8 border-t border-white/5 bg-white/5 backdrop-blur-md flex items-center justify-between">
-           <div className="flex items-center gap-3">
-             <Award className="h-5 w-5 text-amber-500" />
-             <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Verified Beneficiary Status</span>
+        <div className="p-4 sm:p-8 border-t border-white/5 bg-white/5 backdrop-blur-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+           <div className="flex items-center gap-2 sm:gap-3">
+             <Award className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500 shrink-0" />
+             <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest opacity-60">Verified Beneficiary Status</span>
            </div>
-           <span className="text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full animate-pulse">
+           <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider sm:tracking-widest bg-emerald-500/10 text-emerald-500 px-3 py-1 rounded-full animate-pulse">
              Direct Transfer Active
            </span>
         </div>

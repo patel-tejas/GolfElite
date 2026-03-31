@@ -45,46 +45,80 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[url('/grain.png')] bg-repeat selection:bg-primary/30">
-      {/* Premium Header */}
-      <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-background/80 backdrop-blur-xl">
-        <div className="container flex h-20 max-w-screen-2xl items-center justify-between px-6 md:px-12">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-xl bg-primary-gradient flex items-center justify-center shadow-lg shadow-primary/20">
-               <Trophy className="h-6 w-6 text-primary-foreground" />
+      {/* Solid Professional Header */}
+      <header className="sticky top-0 z-50 w-full bg-[#0a2012] border-b border-emerald-900/40 shadow-md">
+        <div className="mx-auto flex h-16 sm:h-20 w-full max-w-screen-2xl items-center justify-between px-4 sm:px-6 md:px-12">
+          {/* Brand/Logo Area */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+               <Trophy className="h-5 w-5 sm:h-6 sm:w-6 text-[#0a2012]" />
             </div>
             <div className="flex flex-col -space-y-1">
-              <span className="text-xl font-black tracking-tighter bg-gold-gradient bg-clip-text text-transparent uppercase">Fairway</span>
-              <span className="text-[10px] font-black tracking-[0.2em] text-muted-foreground uppercase opacity-60">Charity Elite</span>
+              <span className="text-lg sm:text-xl font-black tracking-tighter text-white uppercase">Fairway</span>
+              <span className="text-[8px] sm:text-[10px] font-black tracking-[0.2em] text-emerald-400 uppercase">Charity Elite</span>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="p-2 rounded-full hover:bg-white/5 transition-colors relative">
-              <Bell className="h-5 w-5 text-muted-foreground" />
-              <div className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary border-2 border-background" />
+          {/* Desktop User Actions */}
+          <div className="hidden sm:flex items-center gap-4">
+            <button className="p-2 rounded-full hover:bg-emerald-900/50 transition-colors relative">
+              <Bell className="h-5 w-5 text-emerald-100" />
+              <div className="absolute top-2 right-2 h-2 w-2 rounded-full bg-emerald-500 border-2 border-[#0a2012]" />
             </button>
             
-            <div className="h-8 w-px bg-white/10 mx-2" />
+            <div className="h-8 w-px bg-emerald-900/50 mx-2" />
             
-            <div className="flex items-center gap-3 bg-white/5 border border-white/10 p-1.5 pr-4 rounded-full">
-               <div className="h-8 w-8 rounded-full bg-primary-gradient flex items-center justify-center text-[10px] font-black text-primary-foreground">
+            <div className="flex items-center gap-3 bg-[#0d2816] border border-emerald-900/50 p-1.5 pr-4 rounded-full shadow-inner">
+               <div className="h-8 w-8 rounded-full bg-emerald-800 flex items-center justify-center text-[10px] font-black text-emerald-100">
                  {user?.email?.[0].toUpperCase()}
                </div>
-               <span className="text-xs font-black tracking-tight hidden sm:inline">{user?.email?.split('@')[0]}</span>
+               <span className="text-xs font-bold tracking-tight text-emerald-50 hidden sm:inline">{user?.email?.split('@')[0]}</span>
             </div>
             
             <ModeToggle />
             
             <form action={signout}>
-              <Button type="submit" variant="ghost" size="icon" className="rounded-full hover:bg-rose-500/10 hover:text-rose-500">
-                <LogOut className="h-5 w-5" />
+              <Button type="submit" variant="ghost" size="icon" className="rounded-full hover:bg-rose-500/20 hover:text-rose-400 text-emerald-100 transition-colors">
+                <LogOut className="h-4 w-4" />
               </Button>
             </form>
           </div>
+          
+          {/* Mobile User Avatar Toggle (Optional, but let's keep it simple with bottom bar) */}
+          <div className="sm:hidden flex items-center">
+            <div className="h-8 w-8 rounded-full bg-emerald-800 flex items-center justify-center text-[10px] font-black text-emerald-100 shadow-inner">
+               {user?.email?.[0].toUpperCase()}
+            </div>
+          </div>
         </div>
       </header>
+      
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden items-center justify-around bg-[#0a2012] border-t border-emerald-900/40 p-3 pb-safe shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.5)]">
+        <button className="flex flex-col items-center gap-1 text-emerald-500">
+          <Trophy className="h-5 w-5" />
+          <span className="text-[9px] font-black uppercase tracking-wider">Board</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-emerald-100 relative">
+          <Bell className="h-5 w-5" />
+          <div className="absolute top-0 right-1 h-2 w-2 rounded-full bg-emerald-500 border-2 border-[#0a2012]" />
+          <span className="text-[9px] font-black uppercase tracking-wider">Alerts</span>
+        </button>
+        <div className="flex flex-col items-center gap-1 pt-1">
+          <div className="scale-75 -my-2">
+            <ModeToggle />
+          </div>
+          <span className="text-[9px] font-black uppercase tracking-wider text-emerald-100 mt-1">Theme</span>
+        </div>
+        <form action={signout} className="flex flex-col items-center gap-1 pt-1">
+          <button type="submit" className="text-emerald-100 flex flex-col items-center hover:text-rose-400 transition-colors">
+            <LogOut className="h-5 w-5" />
+            <span className="text-[9px] font-black uppercase tracking-wider mt-[2px]">Log Out</span>
+          </button>
+        </form>
+      </div>
 
-      <main className="flex-1 w-full max-w-screen-2xl mx-auto p-6 md:p-12 space-y-12">
+      <main className="flex-1 w-full max-w-screen-2xl mx-auto p-4 pb-28 sm:p-6 md:p-12 space-y-6 sm:space-y-8 md:space-y-12">
         {/* Row 1: Winnings Banner (Full Width) */}
         <section className="animate-slide-up">
            <WinningsBanner 

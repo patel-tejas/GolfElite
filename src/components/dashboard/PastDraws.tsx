@@ -68,15 +68,15 @@ function DrawRow({ draw, isExpanded, onToggle, currentUserId }: { draw: any, isE
     <div className="border border-white/5 bg-zinc-950 rounded-xl overflow-hidden transition-all duration-300">
       <div 
         onClick={onToggle}
-        className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
+        className="p-3 sm:p-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-white/5 transition-colors"
       >
-        <div>
-          <h4 className="font-bold text-white tracking-widest uppercase text-sm">{draw.title}</h4>
+        <div className="min-w-0 flex-1">
+          <h4 className="font-bold text-white tracking-wider sm:tracking-widest uppercase text-xs sm:text-sm truncate">{draw.title}</h4>
           <p className="text-xs text-zinc-500">{draw.draw_date ? format(new Date(draw.draw_date), 'MMM d, yyyy') : 'No Date'}</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
            {currentUserWin && (
-             <Badge className="bg-amber-500 text-black border-none uppercase text-[9px] font-black tracking-widest">
+             <Badge className="bg-amber-500 text-black border-none uppercase text-[9px] font-black tracking-wider sm:tracking-widest hidden xs:inline-flex">
                 You Won!
              </Badge>
            )}
@@ -84,23 +84,29 @@ function DrawRow({ draw, isExpanded, onToggle, currentUserId }: { draw: any, isE
               <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Prize Pool</p>
               <p className="text-emerald-400 font-bold uppercase">£{draw.prize_pool || 0}</p>
            </div>
-           {isExpanded ? <ChevronUp className="h-4 w-4 text-zinc-500" /> : <ChevronDown className="h-4 w-4 text-zinc-500" />}
+           {isExpanded ? <ChevronUp className="h-4 w-4 text-zinc-500 shrink-0" /> : <ChevronDown className="h-4 w-4 text-zinc-500 shrink-0" />}
         </div>
       </div>
       
       {isExpanded && (
-        <div className="p-4 border-t border-white/5 bg-black/20 space-y-6">
+        <div className="p-3 sm:p-4 border-t border-white/5 bg-black/20 space-y-4 sm:space-y-6">
           
+          {/* Prize Pool - visible on mobile when expanded */}
+          <div className="sm:hidden flex items-center justify-between">
+            <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Prize Pool</span>
+            <span className="text-emerald-400 font-bold uppercase">£{draw.prize_pool || 0}</span>
+          </div>
+
           {/* Lucky Numbers Display */}
           {draw.lucky_numbers && draw.lucky_numbers.length > 0 && (
             <div>
-              <p className="text-[10px] font-black tracking-[0.2em] text-emerald-500 uppercase mb-3 flex items-center gap-2">
-                <CheckCircle2 className="h-3 w-3" />
+              <p className="text-[10px] font-black tracking-[0.15em] sm:tracking-[0.2em] text-emerald-500 uppercase mb-3 flex items-center gap-2">
+                <CheckCircle2 className="h-3 w-3 shrink-0" />
                 Winning Numbers
               </p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {draw.lucky_numbers.map((num: number, i: number) => (
-                  <div key={i} className="h-8 w-8 rounded-lg outline outline-emerald-500/30 bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-xs">
+                  <div key={i} className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg outline outline-emerald-500/30 bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-[10px] sm:text-xs">
                     {num}
                   </div>
                 ))}
@@ -122,19 +128,19 @@ function DrawRow({ draw, isExpanded, onToggle, currentUserId }: { draw: any, isE
             {hasWinners ? (
               <div className="space-y-2">
                 {draw.winners.map((w: any) => (
-                  <div key={w.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white/5 border border-white/5 rounded-xl text-sm gap-3">
-                     <div className="flex sm:items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-zinc-800 flex items-center justify-center">
+                  <div key={w.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 sm:p-3 bg-white/5 border border-white/5 rounded-xl text-sm gap-2 sm:gap-3 w-full overflow-hidden">
+                     <div className="flex items-center gap-2 sm:gap-3 min-w-0 w-full flex-1">
+                        <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
                            <Trophy className="h-3 w-3 text-zinc-500" />
                         </div>
-                        <div>
-                           <p className="text-white font-bold">{w.profiles?.full_name || w.profiles?.email || 'Anonymous'}</p>
-                           <p className="text-xs text-zinc-500 font-mono tracking-widest mt-1">Matched: {w.matched_numbers?.join(', ') || 'N/A'}</p>
+                        <div className="min-w-0 flex-1">
+                           <p className="text-white font-bold text-xs sm:text-sm truncate w-full">{w.profiles?.full_name || w.profiles?.email || 'Anonymous'}</p>
+                           <p className="text-[10px] sm:text-xs text-zinc-500 font-mono tracking-wider sm:tracking-widest mt-0.5 truncate w-full">Matched: {w.matched_numbers?.join(', ') || 'N/A'}</p>
                         </div>
                      </div>
-                     <div className="text-right sm:text-right">
-                        <p className="text-emerald-400 font-black italic">£{w.prize_amount}</p>
-                        <Badge className={`${w.payment_status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-500'} border-none uppercase text-[9px] font-black tracking-widest`}>
+                     <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 pl-9 sm:pl-0 shrink-0">
+                        <p className="text-emerald-400 font-black italic text-sm">£{w.prize_amount}</p>
+                        <Badge className={`${w.payment_status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-500'} border-none uppercase text-[9px] font-black tracking-wider sm:tracking-widest`}>
                            {w.payment_status}
                         </Badge>
                      </div>
@@ -184,19 +190,19 @@ function ClaimSection({ win }: { win: any }) {
       <div className="absolute top-0 right-0 p-24 bg-amber-500/10 blur-[60px] rounded-full pointer-events-none" />
       <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h3 className="text-lg font-black text-amber-500 uppercase tracking-widest flex items-center gap-2 mb-1">
-            <CheckCircle2 className="h-5 w-5" /> You are a Winner!
+          <h3 className="text-base sm:text-lg font-black text-amber-500 uppercase tracking-wider sm:tracking-widest flex items-center gap-2 mb-1">
+            <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 shrink-0" /> You are a Winner!
           </h3>
-          <p className="text-amber-500/80 text-xs font-bold uppercase tracking-widest mb-4">
-            Upload scorecard proof to claim your £{win.prize_amount}
+          <p className="text-amber-500/80 text-[10px] sm:text-xs font-bold uppercase tracking-wider sm:tracking-widest mb-4">
+            Upload proof to claim £{win.prize_amount}
           </p>
           
           {win.payment_status === 'pending' && (
-            <div className="flex items-center gap-3">
-              <label className="cursor-pointer">
-                <div className="flex items-center gap-2 bg-black/50 hover:bg-black/70 border border-amber-500/30 px-4 py-2 rounded-lg text-xs font-bold text-amber-500 transition-colors uppercase tracking-widest">
-                  <ImageIcon className="h-4 w-4" />
-                  {file ? file.name : 'Select Image'}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <label className="cursor-pointer w-full sm:w-auto">
+                <div className="flex items-center justify-center sm:justify-start gap-2 bg-black/50 hover:bg-black/70 border border-amber-500/30 px-4 py-2 rounded-lg text-xs font-bold text-amber-500 transition-colors uppercase tracking-widest w-full">
+                  <ImageIcon className="h-4 w-4 shrink-0" />
+                  <span className="truncate max-w-[200px]">{file ? file.name : 'Select Image'}</span>
                 </div>
                 <input 
                   type="file" 
@@ -209,7 +215,7 @@ function ClaimSection({ win }: { win: any }) {
               <Button 
                 onClick={handleUpload}
                 disabled={!file || isClaiming}
-                className="bg-amber-500 text-black hover:bg-amber-400 font-black uppercase text-[10px] tracking-widest h-auto py-2"
+                className="bg-amber-500 text-black hover:bg-amber-400 font-black uppercase text-[10px] tracking-widest h-auto py-2 w-full sm:w-auto"
               >
                 {isClaiming ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
                 Submit Proof
@@ -218,19 +224,19 @@ function ClaimSection({ win }: { win: any }) {
           )}
           
           {win.payment_status === 'claimed' && (
-            <Badge className="bg-amber-500 text-black font-black uppercase tracking-widest py-1 border-none shadow-lg shadow-amber-500/20">
+            <Badge className="bg-amber-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1 border-none shadow-lg shadow-amber-500/20 whitespace-normal h-auto text-center">
               Proof Submitted &bull; Awaiting Review
             </Badge>
           )}
 
           {win.payment_status === 'verified' && (
-            <Badge className="bg-emerald-500 text-black font-black uppercase tracking-widest py-1 border-none shadow-lg shadow-emerald-500/20">
+            <Badge className="bg-emerald-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1 border-none shadow-lg shadow-emerald-500/20 whitespace-normal h-auto text-center">
               Verified &bull; Ready for Payout
             </Badge>
           )}
 
           {win.payment_status === 'paid' && (
-            <Badge className="bg-emerald-500 text-black font-black uppercase tracking-widest py-1 border-none shadow-lg shadow-emerald-500/20">
+            <Badge className="bg-emerald-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1 border-none shadow-lg shadow-emerald-500/20 whitespace-normal h-auto text-center">
               Paid
             </Badge>
           )}

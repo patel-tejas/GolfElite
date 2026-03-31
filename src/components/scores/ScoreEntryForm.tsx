@@ -83,7 +83,7 @@ export function ScoreEntryForm({
       "glass-panel overflow-hidden transition-all duration-500",
       editData && "border-primary ring-1 ring-primary/20"
     )}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
         <div>
           <CardTitle className="text-xl">
             {editData ? 'Edit Stableford Score' : 'Digital Clubhouse'}
@@ -99,7 +99,7 @@ export function ScoreEntryForm({
             setIsOpen(!isOpen)
             if (isOpen && editData) onSuccess?.() // Clear edit mode on close
           }}
-          className="gap-2 transition-all"
+          className="gap-2 transition-all w-full sm:w-auto"
         >
           {isOpen ? 'Close' : <><PlusCircle className="h-4 w-4" /> Add Round</>}
         </Button>
@@ -142,11 +142,11 @@ export function ScoreEntryForm({
                     />
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Button 
                     type="submit" 
                     disabled={isPending || isDeleting} 
-                    className="flex-1 h-12 btn-premium shadow-lg text-primary-foreground font-bold text-base"
+                    className="w-full sm:flex-1 h-12 btn-premium shadow-lg text-primary-foreground font-bold text-base"
                   >
                     {isPending ? (
                       <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
@@ -155,13 +155,13 @@ export function ScoreEntryForm({
                     )}
                   </Button>
                   {editData && (
-                    <>
+                    <div className="flex gap-3 w-full sm:w-auto">
                       <Button 
                         type="button" 
                         variant="destructive"
                         disabled={isPending || isDeleting}
                         onClick={handleDelete}
-                        className="h-12 w-12 p-0 flex items-center justify-center shrink-0 border-white/10 hover:bg-destructive/90"
+                        className="h-12 flex-1 sm:w-12 sm:flex-none p-0 flex items-center justify-center shrink-0 border-white/10 hover:bg-destructive/90"
                       >
                         {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                       </Button>
@@ -170,11 +170,11 @@ export function ScoreEntryForm({
                         variant="outline"
                         disabled={isPending || isDeleting}
                         onClick={() => onSuccess?.()}
-                        className="h-12 border-white/10 hover:bg-white/5"
+                        className="h-12 flex-1 sm:flex-none border-white/10 hover:bg-white/5"
                       >
                         Cancel
                       </Button>
-                    </>
+                    </div>
                   )}
                 </div>
               </form>

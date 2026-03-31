@@ -20,22 +20,22 @@ export function WinningsBanner({ totalWon = 1250, currentBalance = 150, status =
       <div className="absolute -top-12 -right-12 h-40 w-40 bg-primary opacity-10 blur-3xl" />
       <div className="absolute -bottom-12 -left-12 h-40 w-40 bg-gold-secondary/20 opacity-10 blur-3xl" />
 
-      <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="flex items-center gap-6">
-          <div className="h-16 w-16 md:h-20 md:w-20 rounded-2xl bg-gold-gradient p-0.5 shadow-lg shadow-primary/20">
+      <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <div className="h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-2xl bg-gold-gradient p-0.5 shadow-lg shadow-primary/20 shrink-0">
             <div className="h-full w-full rounded-[14px] bg-background flex items-center justify-center">
-              <Coins className="h-8 w-8 md:h-10 md:w-10 text-primary" />
+              <Coins className="h-6 w-6 sm:h-8 sm:w-8 md:h-10 md:w-10 text-primary" />
             </div>
           </div>
           <div>
-            <h3 className="text-sm font-black uppercase tracking-widest text-primary/60">Total Winnings</h3>
-            <span className="text-4xl md:text-5xl font-black tracking-tighter text-gradient-gold">
+            <h3 className="text-xs sm:text-sm font-black uppercase tracking-wider sm:tracking-widest text-primary/60">Total Winnings</h3>
+            <span className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-gradient-gold">
               ${totalWon.toLocaleString()}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-12 w-full md:w-auto">
+        <div className="flex items-center gap-6 sm:gap-8 md:gap-12 w-full md:w-auto">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tighter opacity-60">
               <Landmark className="h-3 w-3" />

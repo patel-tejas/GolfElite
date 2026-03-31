@@ -28,35 +28,37 @@ export function ComparisonTable() {
         </div>
 
         <div className="max-w-4xl mx-auto glass-card overflow-hidden border-white/5">
-          <table className="w-full text-left">
-            <thead>
-              <tr className="border-b border-white/10">
-                <th className="p-6 md:p-8 text-xs font-bold uppercase tracking-widest text-zinc-500">Feature</th>
-                <th className="p-6 md:p-8 text-xs font-bold uppercase tracking-widest text-zinc-500 text-center">Traditional Golf</th>
-                <th className="p-6 md:p-8 text-xs font-bold uppercase tracking-widest text-accent text-center bg-accent/5">This Platform</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => (
-                <motion.tr 
-                  key={i}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="border-b border-white/5 last:border-0 hover:bg-white/2 transition-colors"
-                >
-                  <td className="p-6 md:p-8 font-medium text-white">{row.feature}</td>
-                  <td className="p-6 md:p-8 text-center text-zinc-500 font-semibold italic">
-                    {typeof row.traditional === "boolean" ? (row.traditional ? "✓" : <X className="w-5 h-5 mx-auto text-zinc-800" />) : row.traditional}
-                  </td>
-                  <td className="p-6 md:p-8 text-center text-accent font-black bg-accent/2">
-                    {typeof row.platform === "boolean" ? (row.platform ? <Check className="w-5 h-5 mx-auto text-accent" /> : "✗") : row.platform}
-                  </td>
-                </motion.tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left min-w-[600px]">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="p-4 md:p-8 text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-500 whitespace-nowrap">Feature</th>
+                  <th className="p-4 md:p-8 text-[10px] md:text-xs font-bold uppercase tracking-widest text-zinc-500 text-center whitespace-nowrap">Traditional Golf</th>
+                  <th className="p-4 md:p-8 text-[10px] md:text-xs font-bold uppercase tracking-widest text-accent text-center bg-accent/5 whitespace-nowrap">This Platform</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, i) => (
+                  <motion.tr 
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="border-b border-white/5 last:border-0 hover:bg-white/2 transition-colors"
+                  >
+                    <td className="p-4 md:p-8 font-medium text-white text-sm md:text-base">{row.feature}</td>
+                    <td className="p-4 md:p-8 text-center text-zinc-500 font-semibold italic text-sm md:text-base">
+                      {typeof row.traditional === "boolean" ? (row.traditional ? "✓" : <X className="w-4 h-4 md:w-5 md:h-5 mx-auto text-zinc-800" />) : row.traditional}
+                    </td>
+                    <td className="p-4 md:p-8 text-center text-accent font-black bg-accent/2 text-sm md:text-base">
+                      {typeof row.platform === "boolean" ? (row.platform ? <Check className="w-4 h-4 md:w-5 md:h-5 mx-auto text-accent" /> : "✗") : row.platform}
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>

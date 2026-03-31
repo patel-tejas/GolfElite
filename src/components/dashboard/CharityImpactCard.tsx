@@ -45,8 +45,8 @@ export function CharityImpactCard({
             </span>
           </div>
         </div>
-        <CardTitle className="mt-6 text-2xl font-black tracking-tight uppercase italic drop-shadow-sm">{charityName}</CardTitle>
-        <CardDescription className="text-muted-foreground font-medium uppercase tracking-tighter opacity-80 mt-1">Your performance directly powers this cause.</CardDescription>
+        <CardTitle className="mt-6 text-xl sm:text-2xl font-black tracking-tight uppercase italic drop-shadow-sm text-balance">{charityName}</CardTitle>
+        <CardDescription className="text-muted-foreground text-xs sm:text-sm font-medium uppercase tracking-tighter sm:tracking-widest opacity-80 mt-1">Your performance directly powers this cause.</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-8 relative z-10">
