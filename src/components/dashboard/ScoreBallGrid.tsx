@@ -1,134 +1,126 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Plus, Trophy, Pencil } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { Pencil, Trophy, HelpCircle } from 'lucide-react'
+import Image from 'next/image'
+
+interface Score {
+  id: string
+  score: number
+  played_at: string
+}
 
 interface ScoreBallGridProps {
-  scores: { id: string, score: number, played_at: string }[]
+  scores: Score[]
   average: number
   needed: number
-  onEdit?: (score: { id: string, score: number, played_at: string }) => void
+  onEdit?: (score: Score) => void
 }
 
 export function ScoreBallGrid({ scores, average, needed, onEdit }: ScoreBallGridProps) {
-  // Ensure we always have 5 slots
-  const slots = Array.from({ length: 5 }, (_, i) => scores[i] || null)
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
-  }
+  // Ensure we have exactly 5 slots, filling with placeholders if needed
+  const displayScores = Array.from({ length: 5 }, (_, i) => scores[i] || null)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-end justify-between px-2">
-        <div>
-          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60">Performance Profile</h3>
-          <div className="flex items-baseline gap-2">
-            <span className="text-6xl font-black tracking-tighter text-gradient-gold">
-              {average > 0 ? average.toFixed(1) : '--'}
-            </span>
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Rolling Avg</span>
+    <section className="w-full bg-zinc-50 dark:bg-zinc-950/50 rounded-[2.5rem] p-8 md:p-12 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+      {/* Header Area */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px]">
+            <Trophy className="h-3 w-3" />
+            Performance Index
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white">
+            Rolling <span className="text-primary font-black">Top 5</span> Scores
+          </h2>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-md">
+            Your entry probability is calculated from your top 5 most recent verified rounds.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-8 bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+          <div className="text-center">
+            <div className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Current Index</div>
+            <div className="text-3xl font-black text-zinc-900 dark:text-white">{average.toFixed(1)}</div>
+          </div>
+          <div className="w-px h-10 bg-zinc-200 dark:border-zinc-800" />
+          <div className="text-center">
+            <div className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Rounds Needed</div>
+            <div className="text-3xl font-black text-primary">{needed}</div>
           </div>
         </div>
-        
-        {needed > 0 && (
-          <div className="flex flex-col items-end">
-            <span className="text-[10px] font-black uppercase tracking-tighter bg-amber-500/10 text-amber-500 px-3 py-1 rounded-full border border-amber-500/20 animate-pulse">
-              Needs {needed} More Rounds
-            </span>
-          </div>
-        )}
       </div>
 
-      <motion.div 
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="grid grid-cols-5 gap-4 md:gap-7 max-w-5xl mx-auto py-4"
-      >
-        {slots.map((scoreData, index) => (
+      {/* Pure Image Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-10">
+        {displayScores.map((score, index) => (
           <motion.div
-            key={index}
-            variants={item}
+            key={score?.id || `empty-${index}`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: index * 0.05 }}
             className="group relative aspect-square"
           >
-            {/* The "Golf Ball" Glow (More intense now) */}
-            <div className={cn(
-              "absolute inset-0 rounded-full blur-3xl transition-all duration-700 opacity-0 group-hover:opacity-60",
-              scoreData ? "bg-primary/50" : "bg-muted/30"
-            )} />
-
-            {/* Luxurious Golf Ball Container - Now hides the ball if no score exists */}
-            <div className={cn(
-              "relative h-full w-full rounded-full flex items-center justify-center transition-all duration-500 overflow-hidden",
-              scoreData 
-                ? "cursor-pointer border border-white/5" 
-                : "border-2 border-dashed border-white/10 hover:border-primary/40 bg-white/5 transition-colors"
-            )}>
-              {/* Asset-Based Golf Ball - ONLY rendered if score exists */}
-              {scoreData && (
-                <img 
-                  src="/assets/golf-ball.png"
-                  alt="Golf Ball"
-                  className="absolute inset-0 h-full w-full object-cover transition-all duration-700 group-hover:rotate-360 group-hover:blur-[2px] group-hover:scale-110"
-                />
-              )}
-
-              {/* Score Overlay - Fades out to reveal edit button */}
-              <div className="relative z-10 flex flex-col items-center transition-all duration-300 group-hover:opacity-0 group-hover:scale-50">
-                {scoreData ? (
-                  <>
-                    <span className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 drop-shadow-xl leading-none select-none">
-                      {scoreData.score}
+            {/* The Golf Ball Container - Edge to Edge Image */}
+            <div className={`relative w-full h-full rounded-full overflow-hidden transition-all duration-500 ${
+              score ? 'cursor-pointer shadow-2xl hover:scale-105' : 'bg-zinc-200 dark:bg-zinc-900/50 border-2 border-dashed border-zinc-300 dark:border-zinc-800'
+            }`}>
+              {score ? (
+                <>
+                  <Image
+                    src="/assets/golf-ball.png"
+                    alt="Golf Ball"
+                    fill
+                    loading="eager"
+                    className="object-cover transition-all duration-500 group-hover:blur-[4px] group-hover:brightness-50"
+                  />
+                  
+                  {/* Score Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">
+                    <span className="text-5xl md:text-6xl font-black text-black drop-shadow-[0_2px_10px_rgba(255,255,255,0.8)] tracking-tighter">
+                      {score.score}
                     </span>
-                  </>
-                ) : (
-                  <Plus className="h-10 w-10 text-slate-400" />
-                )}
-              </div>
-
-              {/* Hover Edit Button Overlay - Balanced and elegant */}
-              {scoreData && onEdit && (
-                <div 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(scoreData);
-                  }}
-                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20"
-                >
-                  <div className="bg-primary text-primary-foreground p-5 rounded-full shadow-2xl scale-50 group-hover:scale-100 transition-all duration-500 hover:bg-primary/90">
-                    <Pencil className="h-7 w-7" />
                   </div>
+
+                  {/* Hover Interaction */}
+                  <div 
+                    onClick={() => onEdit?.(score)}
+                    className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
+                  >
+                    <div className="p-4 rounded-full bg-primary text-black transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 shadow-xl">
+                      <Pencil className="h-6 w-6 stroke-[2.5px]" />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-full opacity-30">
+                  <HelpCircle className="h-8 w-8 mb-2" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Score {index + 1}</span>
                 </div>
               )}
             </div>
 
-            {/* Date/Slot Label */}
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30 whitespace-nowrap pointer-events-none">
-              <span className={cn(
-                "px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl transition-all duration-500",
-                scoreData 
-                  ? "bg-slate-900 text-white border-primary/40 group-hover:bg-primary group-hover:border-primary group-hover:-translate-y-1" 
-                  : "bg-background/80 text-muted-foreground border-border backdrop-blur-md"
-              )}>
-                {scoreData ? new Date(scoreData.played_at).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' }) : `ROUND ${index + 1}`}
-              </span>
-            </div>
+            {/* Date Label */}
+            {score && (
+              <div className="mt-4 text-center">
+                <div className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-0.5">
+                  #{index + 1} Round
+                </div>
+                <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                  {new Date(score.played_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
+                </div>
+              </div>
+            )}
           </motion.div>
         ))}
-      </motion.div>
-    </div>
+      </div>
+
+      {/* Footer Action */}
+      <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+        <button className="px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl">
+          Enter New Match Score
+        </button>
+      </div>
+    </section>
   )
 }

@@ -13,91 +13,161 @@ import { PricingSection } from "@/components/landing/Pricing";
 import { FAQSection } from "@/components/landing/FAQ";
 import { FinalCTA } from "@/components/landing/FinalCTA";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Trophy } from "lucide-react";
+import { Heart, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button-variants";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function Home() {
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen bg-black selection:bg-accent/30">
-      {/* Premium Navbar */}
-      <header className="fixed top-0 z-50 w-full border-b border-white/5 bg-black/60 backdrop-blur-xl">
+    <>
+      <header className={`fixed top-0 z-50 w-full transition-all duration-500 ${scrolled ? 'bg-[#0b1120]/90 backdrop-blur-2xl border-b border-white/[0.05] shadow-2xl' : 'bg-transparent'}`}>
         <div className="container mx-auto flex h-20 max-w-screen-2xl items-center justify-between px-4 sm:px-8">
-          <div className="flex items-center gap-3 font-heading font-black text-2xl tracking-tighter group cursor-pointer">
-            <div className="bg-accent p-2 rounded-xl shadow-[0_0_20px_rgba(180,150,80,0.3)] transition-all group-hover:scale-110">
-              <Trophy className="h-6 w-6 text-accent-foreground" />
+          <Link href="/" className="flex items-center gap-3 group cursor-pointer">
+            <div className="relative">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <Heart className="h-5 w-5 text-white fill-white/30" />
+              </div>
+              <div className="absolute -inset-1 bg-gradient-to-br from-primary to-accent opacity-0 group-hover:opacity-30 rounded-xl blur-lg transition-opacity" />
             </div>
-            <span className="text-white">
-              GOLF<span className="text-accent tracking-normal font-medium">PRESTIGE</span>
-            </span>
-          </div>
-          
+            <div className="flex flex-col -space-y-0.5">
+              <span className="text-xl font-heading font-black tracking-tight text-white leading-none">FAIRWAY</span>
+              <span className="text-[9px] font-bold tracking-[0.25em] text-white/30 uppercase">Play • Win • Give</span>
+            </div>
+          </Link>
+
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center gap-8 text-sm font-bold uppercase tracking-widest text-zinc-400">
-               <a href="#how-it-works" className="hover:text-accent transition-colors">Process</a>
-               <a href="#prizes" className="hover:text-accent transition-colors">Rewards</a>
-               <a href="#pricing" className="hover:text-accent transition-colors">Pricing</a>
-            </div>
-            <div className="h-6 w-px bg-white/10 hidden md:block" />
+            <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-white/40">
+              <a href="#how-it-works" className="hover:text-white transition-colors duration-300">How It Works</a>
+              <a href="#prizes" className="hover:text-white transition-colors duration-300">Rewards</a>
+              <a href="#charity-impact" className="hover:text-white transition-colors duration-300">Impact</a>
+              <a href="#pricing" className="hover:text-white transition-colors duration-300">Pricing</a>
+            </nav>
+            <div className="h-6 w-px bg-white/[0.06] hidden md:block" />
             <ModeToggle />
-            <Link 
-              href="/login" 
-              className={buttonVariants({ variant: "ghost", className: "text-zinc-400 hover:text-white font-bold uppercase tracking-widest text-xs hidden sm:flex" })}
+            <Link
+              href="/login"
+              className={buttonVariants({ variant: "ghost", className: "text-white/40 hover:text-white font-semibold text-sm hidden sm:flex" })}
             >
               Sign In
             </Link>
-            <Link 
-              href="/signup" 
-              className={buttonVariants({ className: "btn-premium px-8 h-12 font-black rounded-xl" })}
+            <Link
+              href="/signup"
+              className={buttonVariants({ className: "btn-premium px-7 h-11 font-bold rounded-xl text-sm" })}
             >
-              Join the Club
+              Get Started
             </Link>
+
+            {/* Mobile menu toggle */}
+            <button
+              className="md:hidden p-2 text-white/50 hover:text-white transition-colors"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
       </header>
 
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-20 inset-x-0 z-40 bg-[#0b1120]/95 backdrop-blur-2xl border-b border-white/[0.05] md:hidden"
+          >
+            <nav className="flex flex-col gap-1 p-4">
+              {[
+                { label: "How It Works", href: "#how-it-works" },
+                { label: "Rewards", href: "#prizes" },
+                { label: "Impact", href: "#charity-impact" },
+                { label: "Pricing", href: "#pricing" },
+              ].map(item => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="px-4 py-3 rounded-xl text-sm font-semibold text-white/60 hover:text-white hover:bg-white/[0.04] transition-all"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+export default function Home() {
+  return (
+    <div className="dark flex flex-col min-h-screen bg-premium-dark selection:bg-primary/30">
+      <Navbar />
+
       <main className="flex-1">
         <Hero />
-        
+
         <div id="how-it-works">
           <HowItWorks />
         </div>
-        
+
         <ValueCards />
-        
+
+        <CharityImpactSection />
+
         <div id="prizes">
           <PrizeBreakdown />
         </div>
-        
+
         <DrawDemo />
-        
-        <CharityImpactSection />
-        
+
         <ComparisonTable />
-        
+
         <WinningPotential />
-        
+
         <MonthlyFlow />
-        
+
         <div id="pricing">
           <PricingSection />
         </div>
-        
+
         <FAQSection />
-        
+
         <FinalCTA />
       </main>
 
-      {/* Luxury Footer */}
-      <footer className="border-t border-white/5 py-12 bg-zinc-950">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex flex-col items-center gap-6">
-            <div className="flex items-center gap-2 font-heading font-black text-xl tracking-tighter opacity-50 grayscale">
-              <Trophy className="h-5 w-5" />
-              <span>GOLFPRESTIGE</span>
+      {/* Footer */}
+      <footer className="border-t border-white/[0.04] py-16 bg-[#070b14]">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center gap-8">
+            <div className="flex items-center gap-3 opacity-40 hover:opacity-80 transition-opacity duration-500 group">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Heart className="w-4 h-4 text-white fill-white/30" />
+              </div>
+              <span className="text-sm font-heading font-bold tracking-tight text-white">FAIRWAY</span>
             </div>
-            <p className="text-xs text-zinc-600 font-bold uppercase tracking-[0.2em] max-w-md">
-              © 2026 GolfPrestige Global Platforms. Built for the elite, dedicated to the cause. High Stakes, High Impact.
+
+            <div className="flex items-center gap-8 text-xs text-white/20 font-medium">
+              <a href="#" className="hover:text-white/50 transition-colors">Privacy</a>
+              <a href="#" className="hover:text-white/50 transition-colors">Terms</a>
+              <a href="#" className="hover:text-white/50 transition-colors">Support</a>
+            </div>
+
+            <p className="text-[10px] text-white/15 font-medium text-center max-w-md">
+              © 2026 Fairway Global Platforms. Play responsibly. All charity contributions are verified and auditable.
             </p>
           </div>
         </div>

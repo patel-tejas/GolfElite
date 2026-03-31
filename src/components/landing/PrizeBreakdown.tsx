@@ -1,83 +1,104 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Trophy, Users, TrendingUp, Shield } from "lucide-react";
 
 const prizes = [
-  { label: "Jackpot", percent: 40, color: "bg-accent", icon: "🏆" },
-  { label: "4-Match", percent: 35, color: "bg-blue-500", icon: "💰" },
-  { label: "3-Match", percent: 25, color: "bg-green-500", icon: "💸" },
+  { label: "Jackpot (5-Match)", percent: 40, color: "from-accent to-accent/70", icon: Trophy, desc: "Match all 5 numbers" },
+  { label: "4-Match Tier", percent: 35, color: "from-primary to-primary/70", icon: TrendingUp, desc: "Match 4 of 5 numbers" },
+  { label: "3-Match Tier", percent: 25, color: "from-[var(--neon-mint)] to-[var(--neon-mint)]/70", icon: Users, desc: "Match 3 of 5 numbers" },
 ];
 
 export function PrizeBreakdown() {
   return (
-    <section className="py-24 bg-black relative">
-      <div className="container mx-auto px-4">
+    <section className="py-28 md:py-36 bg-premium-dark relative overflow-hidden" id="prizes">
+      <div className="container mx-auto px-4 max-w-5xl">
         <div className="text-center mb-16">
-          <motion.h2 
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.06] text-white/50 text-xs font-bold uppercase tracking-[0.2em] mb-6"
+          >
+            <Shield className="w-3.5 h-3.5 text-accent" />
+            Full Transparency
+          </motion.div>
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-heading font-black text-white mb-4"
+            className="text-4xl md:text-6xl font-heading font-black text-white mb-4 tracking-tight"
           >
-            Prize Breakdown
+            Prize Pool{" "}
+            <span className="text-gradient-aurora">Breakdown</span>
           </motion.h2>
-          <p className="text-zinc-500 font-medium">Transparency in rewards</p>
-        </div>
-
-        <div className="max-w-4xl mx-auto space-y-12">
-          {/* Visual Bar Section */}
-          <div className="flex w-full h-16 rounded-3xl overflow-hidden shadow-2xl">
-            {prizes.map((p, i) => (
-              <motion.div
-                key={i}
-                initial={{ width: 0 }}
-                whileInView={{ width: `${p.percent}%` }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: i * 0.2 }}
-                className={`h-full ${p.color} relative overflow-hidden group border-r border-black/20 last:border-r-0`}
-              >
-                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Legend Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center sm:text-left">
-            {prizes.map((p, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-                className="p-8 glass-card border-white/5 flex flex-col items-center sm:items-start"
-              >
-                <div className={`w-12 h-12 rounded-xl ${p.color}/10 border border-${p.color}/20 flex items-center justify-center text-2xl mb-6`}>
-                  {p.icon}
-                </div>
-                <div className="flex items-center gap-3 mb-2">
-                   <span className="text-4xl font-heading font-black text-white">{p.percent}%</span>
-                   <span className="text-zinc-500 font-bold uppercase tracking-wider">{p.label}</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Example Calculation */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="p-10 rounded-[2.5rem] bg-linear-to-br from-[#1a1a1a] to-black border border-accent/20 text-center"
+            transition={{ delay: 0.1 }}
+            className="text-white/40 font-medium max-w-lg mx-auto text-lg"
           >
-            <p className="text-2xl font-medium text-zinc-300">
-               “1,000 players = <span className="text-gradient-gold text-4xl font-black italic">$45,000</span> prize pool”
-            </p>
-            <p className="text-zinc-500 mt-4 text-sm font-bold uppercase tracking-widest">
-               Real money. Real impact.
-            </p>
-          </motion.div>
+            90% of subscriptions go to the prize pool. Here&apos;s how it&apos;s distributed, transparently.
+          </motion.p>
         </div>
+
+        {/* Visual Progress Bar */}
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          whileInView={{ opacity: 1, scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+          className="flex w-full h-5 rounded-full overflow-hidden shadow-2xl mb-12 origin-left"
+        >
+          {prizes.map((p, i) => (
+            <div
+              key={i}
+              className={`h-full bg-gradient-to-r ${p.color} relative overflow-hidden border-r border-black/30 last:border-r-0`}
+              style={{ width: `${p.percent}%` }}
+            >
+              <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity" />
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Prize Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {prizes.map((p, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.12 }}
+              className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/[0.06] hover:bg-white/[0.05] hover:border-white/[0.12] transition-all duration-500 hover:-translate-y-2 group text-center"
+            >
+              <div className={`w-14 h-14 mx-auto rounded-2xl bg-gradient-to-br ${p.color} bg-opacity-10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                <p.icon className="w-7 h-7 text-white" />
+              </div>
+              <div className="text-5xl font-heading font-black text-white mb-2 tracking-tighter">{p.percent}%</div>
+              <div className="text-sm font-bold text-white/60 mb-2">{p.label}</div>
+              <p className="text-xs text-white/30 font-medium">{p.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Example Pool */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="mt-12 p-8 md:p-10 rounded-[2rem] bg-gradient-to-r from-white/[0.02] to-white/[0.04] border border-white/[0.06] text-center"
+        >
+          <p className="text-xl md:text-2xl font-medium text-white/60">
+            With 1,000 members:{" "}
+            <span className="text-gradient-aurora text-3xl md:text-4xl font-black">$45,000</span>{" "}
+            prize pool
+          </p>
+          <p className="text-white/25 mt-3 text-sm font-bold uppercase tracking-[0.15em]">
+            Real money. Real impact. Every month.
+          </p>
+        </motion.div>
       </div>
     </section>
   );

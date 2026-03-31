@@ -9,14 +9,18 @@ import {
   Trophy,
   History,
   TrendingDown,
-  User
+  User,
+  Zap,
+  ShieldCheck,
+  Target
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { simulateDraw, publishDrawResults } from '@/utils/admin/actions';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 export function DrawControls() {
   const [simulation, setSimulation] = useState<any>(null);
@@ -55,24 +59,25 @@ export function DrawControls() {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="glass-card border-white/5 bg-white/2">
-        <CardHeader>
+    <div className="space-y-8">
+      <Card className="glass-card border-white/5 bg-zinc-900/40 overflow-hidden relative">
+        <div className="absolute top-0 left-0 w-full h-1 bg-primary-gradient opacity-50" />
+        <CardHeader className="py-8 px-10 border-b border-white/5 bg-white/2">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-xl font-heading font-black italic text-white uppercase tracking-tighter">
-                Draw <span className="text-emerald-500">Execution</span>
+               <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary block mb-2">Operational Protocol</span>
+              <CardTitle className="text-3xl font-heading font-black italic text-white uppercase tracking-tighter leading-none">
+                Draw <span className="text-white/20">Executive</span> Engine
               </CardTitle>
-              <CardDescription className="text-zinc-500">
-                Run a simulation to verify winners before publishing.
-              </CardDescription>
             </div>
-            <div className="flex bg-zinc-950 p-1 rounded-lg border border-white/10">
+            <div className="flex bg-black/40 p-1.5 rounded-xl border border-white/5 shadow-inner">
               <Button 
                 variant={algorithm === 'weighted' ? 'secondary' : 'ghost'} 
                 size="sm"
                 onClick={() => setAlgorithm('weighted')}
-                className="text-[10px] font-black uppercase tracking-widest px-4 h-8"
+                className={`text-[10px] font-black uppercase tracking-widest px-6 h-9 rounded-lg transition-all ${
+                  algorithm === 'weighted' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-zinc-500'
+                }`}
               >
                 Weighted
               </Button>
@@ -80,197 +85,224 @@ export function DrawControls() {
                 variant={algorithm === 'random' ? 'secondary' : 'ghost'} 
                 size="sm"
                 onClick={() => setAlgorithm('random')}
-                className="text-[10px] font-black uppercase tracking-widest px-4 h-8"
+                className={`text-[10px] font-black uppercase tracking-widest px-6 h-9 rounded-lg transition-all ${
+                  algorithm === 'random' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-zinc-500'
+                }`}
               >
                 Random
               </Button>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="p-8 border-2 border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center text-center bg-white/1">
-            <Settings2 className="h-10 w-10 text-emerald-500/20 mb-4 animate-slow-spin" />
-            <h4 className="text-white font-bold text-lg">Ready to Simulate</h4>
-            <p className="text-zinc-500 text-sm max-w-xs mt-2">
-              Select an algorithm and click start to run a draw simulation for the current month.
-            </p>
-            <Button 
-              onClick={handleSimulate} 
-              disabled={isSimulating}
-              className="mt-6 btn-premium h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[11px] flex items-center gap-3 w-64 shadow-2xl shadow-emerald-500/20"
-            >
-              {isSimulating ? <RotateCcw className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-              {isSimulating ? 'Simulating...' : 'Start Simulation'}
-            </Button>
-          </div>
+        <CardContent className="p-10 space-y-10">
+          <AnimatePresence mode="wait">
+            {!simulation ? (
+              <motion.div 
+                key="idle"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="p-12 border-2 border-dashed border-primary/10 rounded-3xl flex flex-col items-center justify-center text-center bg-primary/2 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-primary-gradient opacity-0 group-hover:opacity-5 transition-opacity" />
+                <div className="p-5 rounded-2xl bg-zinc-900 border border-white/10 mb-6 shadow-2xl group-hover:scale-110 transition-transform">
+                  <Settings2 className="h-10 w-10 text-primary animate-slow-spin" />
+                </div>
+                <h4 className="text-white font-black text-2xl uppercase italic tracking-tighter">Ready for Selection</h4>
+                <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.2em] max-w-xs mt-3 leading-relaxed">
+                  Verify the prize pool and algorithm parameters before initializing.
+                </p>
+                <Button 
+                  onClick={handleSimulate} 
+                  disabled={isSimulating}
+                  className="mt-10 btn-premium h-16 px-12 rounded-2xl font-black uppercase tracking-[0.2em] text-[12px] flex items-center gap-4 w-72 shadow-2xl shadow-primary/30 group active:scale-95 transition-all"
+                >
+                  {isSimulating ? <RotateCcw className="h-5 w-5 animate-spin" /> : <Play className="h-5 w-5 fill-current" />}
+                  {isSimulating ? 'Simulating...' : 'Initialize Draw'}
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="results"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="space-y-10"
+              >
+                {/* Lucky Numbers Display */}
+                <div className="bg-black/60 border border-primary/20 p-8 rounded-3xl relative overflow-hidden group shadow-2xl">
+                  <div className="absolute top-0 right-0 p-6 opacity-5">
+                    <Trophy className="h-32 w-32 text-primary" />
+                  </div>
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-8">
+                       <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary flex items-center gap-2">
+                        <Zap className="h-3 w-3 fill-primary" />
+                        Winning Vector Set
+                      </h4>
+                      <Badge className="bg-primary/20 text-primary border-primary/30 uppercase text-[9px] font-black tracking-widest px-3 py-1">
+                        Verified Output
+                      </Badge>
+                    </div>
+                    <div className="flex gap-4 justify-center">
+                      {simulation.luckyNumbers.map((num: number, i: number) => (
+                        <motion.div 
+                          key={i} 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.1 }}
+                          className="h-16 w-16 rounded-2xl bg-zinc-900 border-2 border-primary/20 flex items-center justify-center text-primary font-heading font-black text-2xl italic shadow-2xl shadow-primary/10"
+                        >
+                          {num}
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
-          {simulation && (
-            <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
-              {/* Lucky Numbers Display */}
-              <div className="bg-zinc-950/50 border border-emerald-500/20 p-6 rounded-2xl relative overflow-hidden group">
-                <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative z-10">
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-500 mb-4 flex items-center gap-2">
-                    <Trophy className="h-3 w-3" />
-                    Winning Numbers Generated
-                  </h4>
-                  <div className="flex gap-3 justify-center">
-                    {simulation.luckyNumbers.map((num: number, i: number) => (
-                      <div 
-                        key={i} 
-                        className="h-12 w-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-heading font-black text-xl italic shadow-lg shadow-emerald-500/10 animate-in zoom-in-50 duration-300"
-                        style={{ animationDelay: `${i * 100}ms` }}
-                      >
-                        {num}
+                {/* Winners section ... (truncated for brevity in thought, but full implementation below) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                   <div className="space-y-4">
+                      <div className="flex items-center gap-3 px-2">
+                        <div className="h-2 w-2 rounded-full bg-accent animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Tier 1: Jackpot</span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+                      {simulation.matches5.length > 0 ? (
+                        simulation.matches5.map((w: any) => <WinnerCard key={w.id} winner={w} level="jackpot" luckyNumbers={simulation.luckyNumbers} />)
+                      ) : <div className="p-4 rounded-xl border border-white/5 bg-white/2 text-[9px] font-bold uppercase tracking-widest text-zinc-600 italic">No matches found</div>}
+                   </div>
 
-              <div className="flex items-center justify-between">
-                <h4 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-500 flex items-center gap-2">
-                  <Trophy className="h-3 w-3" />
-                  Simulation Results
-                </h4>
-                <div className="h-px flex-1 bg-emerald-500/10 mx-4" />
-                <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 uppercase text-[9px] font-black tracking-widest">
-                  Draft Results
-                </Badge>
-              </div>
+                   <div className="space-y-4">
+                      <div className="flex items-center gap-3 px-2">
+                        <div className="h-2 w-2 rounded-full bg-zinc-300" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Tier 2: Pro Elite</span>
+                      </div>
+                      {simulation.matches4.length > 0 ? (
+                        simulation.matches4.map((w: any) => <WinnerCard key={w.id} winner={w} level="pro" luckyNumbers={simulation.luckyNumbers} />)
+                      ) : <div className="p-4 rounded-xl border border-white/5 bg-white/2 text-[9px] font-bold uppercase tracking-widest text-zinc-600 italic">No matches found</div>}
+                   </div>
 
-              {/* Winners by Category */}
-              <div className="space-y-8">
-                {/* Category 5 Matches */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-amber-500 text-black border-none font-black text-[9px] px-2 py-0">JACKPOT</Badge>
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">5 Matches</span>
-                  </div>
-                  {simulation.matches5.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-2">
-                      {simulation.matches5.map((w: any) => (
-                        <WinnerCard key={w.id} winner={w} level="jackpot" />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-[10px] text-zinc-600 italic px-4 py-2 border border-white/5 rounded-lg">No Jackpot winners this time.</div>
-                  )}
+                   <div className="space-y-4">
+                      <div className="flex items-center gap-3 px-2">
+                        <div className="h-2 w-2 rounded-full bg-primary/40" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Tier 3: Standard Match</span>
+                      </div>
+                      {simulation.matches3.length > 0 ? (
+                        simulation.matches3.map((w: any) => <WinnerCard key={w.id} winner={w} level="standard" luckyNumbers={simulation.luckyNumbers} />)
+                      ) : <div className="p-4 rounded-xl border border-white/5 bg-white/2 text-[9px] font-bold uppercase tracking-widest text-zinc-600 italic">No matches found</div>}
+                   </div>
                 </div>
 
-                {/* Category 4 Matches */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-zinc-300 text-black border-none font-black text-[9px] px-2 py-0">PRO</Badge>
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">4 Matches</span>
-                  </div>
-                  {simulation.matches4.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {simulation.matches4.map((w: any) => (
-                        <WinnerCard key={w.id} winner={w} level="pro" />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-[10px] text-zinc-600 italic px-4 py-2 border border-white/5 rounded-lg">No Pro winners this time.</div>
-                  )}
+                <div className="flex items-center gap-6 pt-10 border-t border-white/5">
+                  <Button 
+                    onClick={() => setSimulation(null)}
+                    variant="outline" 
+                    className="flex-1 border-white/10 hover:bg-white/5 text-zinc-500 font-black uppercase tracking-widest text-[10px] h-14 rounded-2xl transition-all"
+                  >
+                    <RotateCcw className="h-4 w-4 mr-3" />
+                    Reset Vector
+                  </Button>
+                  <Button 
+                    onClick={handlePublish}
+                    disabled={isPublishing || (simulation.matches5.length === 0 && simulation.matches4.length === 0 && simulation.matches3.length === 0)}
+                    className="flex-2 btn-premium h-14 font-black uppercase tracking-widest text-[11px] rounded-2xl shadow-lg shadow-primary/20"
+                  >
+                    {isPublishing ? 'Transmitting...' : 'Commit & Publish Results'}
+                    {!isPublishing && <CheckCircle2 className="h-4 w-4 ml-3" />}
+                  </Button>
                 </div>
-
-                {/* Category 3 Matches */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Badge className="bg-orange-800 text-white border-none font-black text-[9px] px-2 py-0">STANDARD</Badge>
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">3 Matches</span>
-                  </div>
-                  {simulation.matches3.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {simulation.matches3.map((w: any) => (
-                        <WinnerCard key={w.id} winner={w} level="standard" />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-[10px] text-zinc-600 italic px-4 py-2 border border-white/5 rounded-lg">No Standard winners this time.</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 pt-6">
-                <Button 
-                  onClick={() => setSimulation(null)}
-                  variant="outline" 
-                  className="flex-1 border-white/10 hover:bg-white/5 text-zinc-400 font-black uppercase tracking-widest text-[10px] h-12"
-                >
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Discard Simulation
-                </Button>
-                <Button 
-                  onClick={handlePublish}
-                  disabled={isPublishing || (simulation.matches5.length === 0 && simulation.matches4.length === 0 && simulation.matches3.length === 0)}
-                  className="flex-2 btn-premium h-12 font-black uppercase tracking-widest text-[10px]"
-                >
-                  {isPublishing ? 'Publishing...' : 'Confirm & Publish'}
-                  {!isPublishing && <CheckCircle2 className="h-4 w-4 ml-2" />}
-                </Button>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="glass-card border-white/5 bg-emerald-500/2">
-          <CardHeader className="pb-2">
-            <TrendingDown className="h-5 w-5 text-emerald-500 mb-2" />
-            <CardTitle className="text-sm font-black uppercase tracking-widest text-zinc-500">Algorithm Logic</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-zinc-600 leading-relaxed">
-              The Draw Engine automatically generates 5 unique lucky numbers (1-45). It then scans all eligible Silver subscribers and compares their last 5 logged scores to find exact matches.
-            </p>
-          </CardContent>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="glass-card border-white/5 bg-primary/2 p-1 relative overflow-hidden group">
+          <div className="p-8 space-y-4 relative z-10">
+             <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-zinc-900 border border-primary/20">
+                   <Target className="h-5 w-5 text-primary" />
+                </div>
+                <h4 className="text-xs font-black uppercase tracking-[0.3em] text-white">Algorithm Protocol</h4>
+             </div>
+             <p className="text-[11px] text-zinc-500 leading-relaxed font-bold uppercase tracking-widest">
+               The engine utilizes a {algorithm} algorithm to match the verified scorecard vectors against monthly lucky number seeds. This ensures audited cryptographic fairness.
+             </p>
+          </div>
         </Card>
-        <Card className="glass-card border-white/5 bg-blue-500/2">
-          <CardHeader className="pb-2">
-            <User className="h-5 w-5 text-blue-500 mb-2" />
-            <CardTitle className="text-sm font-black uppercase tracking-widest text-zinc-500">User Eligibility</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-zinc-600 leading-relaxed">
-              Only users with an active 'Silver' subscription and at least 5 logged scores are included in the simulation. Free tier users are excluded from the prize pools.
-            </p>
-          </CardContent>
+        
+        <Card className="glass-card border-white/5 bg-accent/2 p-1 relative overflow-hidden group">
+          <div className="p-8 space-y-4 relative z-10">
+             <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-zinc-900 border border-accent/20">
+                   <ShieldCheck className="h-5 w-5 text-accent" />
+                </div>
+                <h4 className="text-xs font-black uppercase tracking-[0.3em] text-white">Governance Compliance</h4>
+             </div>
+             <p className="text-[11px] text-zinc-500 leading-relaxed font-bold uppercase tracking-widest">
+               All simulations are logged in the audit ledger. Only users with 'Executive' (Silver) subscription status and 5 verified scores are eligible for prize distribution.
+             </p>
+          </div>
         </Card>
       </div>
     </div>
   );
 }
-function WinnerCard({ winner, level }: { winner: any, level: 'jackpot' | 'pro' | 'standard' }) {
-  const colors = {
-    jackpot: 'emerald',
-    pro: 'blue',
-    standard: 'zinc'
+
+function WinnerCard({ winner, level, luckyNumbers }: { winner: any, level: 'jackpot' | 'pro' | 'standard', luckyNumbers: number[] }) {
+  const getLevelColor = () => {
+    switch(level) {
+      case 'jackpot': return 'border-accent text-accent';
+      case 'pro': return 'border-zinc-300 text-zinc-300';
+      case 'standard': return 'border-primary text-primary';
+    }
   };
 
   return (
-    <div className="bg-white/2 border border-white/5 p-4 rounded-xl flex items-center justify-between group hover:bg-white/5 transition-colors">
-      <div className="flex items-center gap-3">
-        <div className={`h-8 w-8 rounded-full bg-${level === 'jackpot' ? 'amber' : level === 'pro' ? 'zinc-300' : 'orange-800'}/20 flex items-center justify-center border border-white/10`}>
-          <User className="h-4 w-4 text-white/40" />
-        </div>
-        <div>
-          <div className="font-bold text-white text-sm">{winner.email}</div>
-          <div className="flex gap-1 mt-1">
-            {winner.scores.map((s: number, i: number) => (
-              <span key={i} className="text-[8px] px-1 bg-white/5 rounded text-zinc-500 font-mono">
-                {s}
-              </span>
-            ))}
+    <motion.div 
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="bg-zinc-900/40 border border-white/5 p-5 rounded-2xl flex flex-col gap-4 group hover:bg-zinc-900/60 hover:border-primary/20 transition-all duration-300 shadow-xl"
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-black border border-white/10 flex items-center justify-center overflow-hidden">
+            <User className="h-4 w-4 text-zinc-600 group-hover:text-primary transition-colors" />
+          </div>
+          <div className="flex flex-col">
+            <div className="text-[10px] font-black text-white truncate max-w-[120px] tracking-tight">{winner.email}</div>
+            <div className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">Subscriber</div>
           </div>
         </div>
+        <div className="text-right">
+          <div className={`text-sm font-black italic ${level === 'jackpot' ? 'text-accent' : 'text-primary'}`}>£{winner.prize}</div>
+          <div className="text-[8px] text-zinc-600 font-black uppercase tracking-tighter">Yield</div>
+        </div>
       </div>
-      <div className="text-right">
-        <div className="text-emerald-400 font-black italic">£{winner.prize}</div>
-        <div className="text-[8px] text-zinc-600 font-bold uppercase tracking-widest">Payout</div>
+      
+      <div className="flex justify-between items-center pt-3 border-t border-white/5">
+        <div className="flex gap-1.5">
+          {winner.scores.map((s: number, i: number) => {
+            const isMatch = luckyNumbers.includes(s);
+            return (
+              <span 
+                key={i} 
+                className={cn(
+                  "text-[9px] px-2 py-0.5 rounded-lg font-black tracking-tighter transition-all duration-500",
+                  isMatch 
+                  ? "bg-primary text-white shadow-lg shadow-primary/20 scale-110" 
+                  : "bg-black/40 text-zinc-700 border border-white/5 grayscale"
+                )}
+              >
+                {s}
+              </span>
+            );
+          })}
+        </div>
+        <div className={cn("text-[8px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full border", getLevelColor())}>
+          {level}
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

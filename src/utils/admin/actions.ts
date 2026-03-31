@@ -220,15 +220,16 @@ export async function publishDrawResults(results: any) {
     return { error: 'No winners found to publish.' };
   }
 
-  // 1. Create a draw record (using 'title' as per user schema)
+  // 1. Create a draw record
   const { data: draw, error: drawError } = await supabase
     .from('draws')
     .insert({
       title: `${new Date().toLocaleString('default', { month: 'long' })} Monthly Draw`,
-      description: `Winning Numbers: ${luckyNumbers.join(', ')}`,
+      description: `Draw Results: ${luckyNumbers.join(', ')}`,
       draw_date: new Date().toISOString(),
       status: 'completed',
-      prize_pool: allWinners.reduce((acc, r) => acc + r.prize, 0)
+      prize_pool: allWinners.reduce((acc, r) => acc + r.prize, 0),
+      winning_numbers: luckyNumbers
     })
     .select()
     .single();
@@ -238,12 +239,15 @@ export async function publishDrawResults(results: any) {
     return { error: 'Failed to create draw record' };
   }
 
-  // 2. Create winner records (using 'prize_amount' as per user schema)
+  // 2. Create winner records with match details
   const winners = allWinners.map(r => ({
     user_id: r.id,
     draw_id: draw.id,
     prize_amount: r.prize,
-    payment_status: 'pending'
+    payment_status: 'pending',
+    is_claimed: false,
+    user_numbers: r.scores,
+    matched_numbers: r.scores.filter((s: number) => luckyNumbers.includes(s))
   }));
 
   const { error: winnerError } = await supabase
@@ -257,6 +261,7 @@ export async function publishDrawResults(results: any) {
 
   revalidatePath('/admin/draws');
   revalidatePath('/admin/winners');
+  revalidatePath('/dashboard');
   return { success: true };
 }
 

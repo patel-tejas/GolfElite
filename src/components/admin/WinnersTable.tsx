@@ -74,6 +74,8 @@ export function WinnersTable({ winners: initialWinners }: WinnersTableProps) {
               <TableHead>Winner</TableHead>
               <TableHead>Draw</TableHead>
               <TableHead>Prize</TableHead>
+              <TableHead>Matches</TableHead>
+              <TableHead>Claimed</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Action</TableHead>
@@ -82,7 +84,7 @@ export function WinnersTable({ winners: initialWinners }: WinnersTableProps) {
           <TableBody>
             {filteredWinners.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-32 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">
+                <TableCell colSpan={8} className="h-32 text-center text-zinc-500 font-bold uppercase tracking-widest text-xs">
                   No records found
                 </TableCell>
               </TableRow>
@@ -101,7 +103,26 @@ export function WinnersTable({ winners: initialWinners }: WinnersTableProps) {
                     <div className="text-xs font-bold text-zinc-300 italic uppercase tracking-tighter">{winner.draw?.name}</div>
                   </TableCell>
                   <TableCell>
-                    <div className="text-emerald-400 font-black italic">£{winner.amount}</div>
+                    <div className="text-emerald-400 font-black italic text-lg leading-none">£{winner.amount}</div>
+                    <div className="text-[8px] text-zinc-500 font-black uppercase tracking-widest mt-1">Net Payout</div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1">
+                      {winner.matched_numbers?.map((num: number, i: number) => (
+                        <div key={i} className="h-5 w-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center text-[10px] font-black text-primary">
+                          {num}
+                        </div>
+                      )) || <span className="text-zinc-600 text-[10px] font-black italic uppercase">Sync Required</span>}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge 
+                      className={winner.is_claimed 
+                        ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' 
+                        : 'bg-zinc-500/20 text-zinc-400 border-zinc-500/30'}
+                    >
+                      {winner.is_claimed ? 'Claimed' : 'Unclaimed'}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge 
@@ -109,7 +130,7 @@ export function WinnersTable({ winners: initialWinners }: WinnersTableProps) {
                         ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
                         : 'bg-orange-500/20 text-orange-400 border-orange-500/30'}
                     >
-                      {winner.payout_status === 'paid' ? 'Paid' : 'Pending Payout'}
+                      {winner.payout_status === 'paid' ? 'Paid' : 'Pending'}
                     </Badge>
                   </TableCell>
                   <TableCell>

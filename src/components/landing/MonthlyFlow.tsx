@@ -1,54 +1,67 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { UserPlus, Calendar, Dice5, Trophy, RefreshCcw } from "lucide-react";
+import { UserPlus, Calendar, Sparkles, Trophy, RefreshCcw, Heart } from "lucide-react";
 
 const steps = [
-  { title: "Join", icon: UserPlus, color: "text-blue-500", bg: "bg-blue-500/10" },
-  { title: "Enter Scores", icon: Calendar, color: "text-accent", bg: "bg-accent/10" },
-  { title: "Monthly Draw", icon: Dice5, color: "text-purple-500", bg: "bg-purple-500/10" },
-  { title: "Win", icon: Trophy, color: "text-green-500", bg: "bg-green-500/10" },
-  { title: "Repeat", icon: RefreshCcw, color: "text-zinc-500", bg: "bg-zinc-500/10" },
+  { title: "Subscribe", subtitle: "Monthly plan", icon: UserPlus, color: "text-primary", bg: "bg-primary/10", border: "border-primary/20" },
+  { title: "Submit", subtitle: "Your 5 scores", icon: Calendar, color: "text-accent", bg: "bg-accent/10", border: "border-accent/20" },
+  { title: "Draw", subtitle: "Monthly event", icon: Sparkles, color: "text-[var(--soft-lavender)]", bg: "bg-[var(--soft-lavender)]/10", border: "border-[var(--soft-lavender)]/20" },
+  { title: "Win", subtitle: "Real cash", icon: Trophy, color: "text-[var(--neon-mint)]", bg: "bg-[var(--neon-mint)]/10", border: "border-[var(--neon-mint)]/20" },
+  { title: "Give", subtitle: "Charity impact", icon: Heart, color: "text-accent", bg: "bg-accent/10", border: "border-accent/20" },
 ];
 
 export function MonthlyFlow() {
   return (
-    <section className="py-24 bg-zinc-950/50 border-y border-white/5 relative items-center">
-      <div className="container mx-auto px-4 text-center">
+    <section className="py-24 md:py-32 bg-premium-dark relative border-y border-white/[0.03]">
+      <div className="container mx-auto px-4 text-center max-w-5xl">
         <div className="mb-16">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-heading font-black text-white mb-4"
+            className="text-4xl md:text-5xl font-heading font-black text-white mb-4 tracking-tight"
           >
-            Monthly Flow
+            Your Monthly{" "}
+            <span className="text-gradient-aurora">Cycle</span>
           </motion.h2>
-          <p className="text-zinc-500 font-medium uppercase tracking-widest text-xs">The lifecycle of a member</p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-white/35 font-medium text-sm uppercase tracking-[0.15em]"
+          >
+            Subscribe → Score → Draw → Win → Give → Repeat
+          </motion.p>
         </div>
 
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative">
-          <div className="hidden md:block absolute top-1/2 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-white/5 to-transparent -translate-y-6" />
-          
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4 relative max-w-4xl mx-auto">
+          {/* Connecting gradient line */}
+          <div className="hidden md:block absolute top-[2.5rem] left-[10%] right-[10%] h-[2px]">
+            <div className="w-full h-full bg-gradient-to-r from-primary/20 via-accent/20 to-[var(--neon-mint)]/20" />
+          </div>
+
           {steps.map((step, i) => (
-             <motion.div
-               key={i}
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               transition={{ delay: i * 0.1 }}
-               className="relative z-10 flex flex-col items-center gap-6"
-             >
-               <div className={`w-16 h-16 rounded-2xl ${step.bg} border border-white/5 flex items-center justify-center shadow-2xl backdrop-blur-sm group hover:scale-110 transition-transform`}>
-                 <step.icon className={`w-8 h-8 ${step.color}`} />
-               </div>
-               <div className="flex flex-col items-center gap-1">
-                 <span className="text-lg font-bold text-white tracking-tight">{step.title}</span>
-                 {i < steps.length - 1 && (
-                    <div className="md:hidden w-px h-8 bg-white/5" />
-                 )}
-               </div>
-             </motion.div>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="relative z-10 flex flex-col items-center gap-4 group"
+            >
+              <div className={`w-[4.5rem] h-[4.5rem] rounded-2xl ${step.bg} ${step.border} border flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-500`}>
+                <step.icon className={`w-7 h-7 ${step.color}`} />
+              </div>
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-base font-bold text-white tracking-tight">{step.title}</span>
+                <span className="text-[10px] text-white/25 font-medium uppercase tracking-wider">{step.subtitle}</span>
+              </div>
+              {/* Vertical connector for mobile */}
+              {i < steps.length - 1 && (
+                <div className="md:hidden w-px h-6 bg-white/[0.06]" />
+              )}
+            </motion.div>
           ))}
         </div>
       </div>

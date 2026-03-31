@@ -1,8 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Heart, Globe, Award, ChevronRight, Lock } from 'lucide-react'
+import { Heart, Globe, Award, ChevronRight, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CharitySelectionModal } from './CharitySelectionModal'
 
@@ -21,80 +20,93 @@ interface CharityImpactCardProps {
   charities?: Charity[]
 }
 
-export function CharityImpactCard({ 
-  charityName = 'Global Green Initiative', 
+export function CharityImpactCard({
+  charityName = 'Global Green Initiative',
   charityId,
   percentage = 10,
   charities = []
 }: CharityImpactCardProps) {
   return (
-    <Card className="glass-panel border-rose-500/10 group overflow-hidden">
-      {/* Dynamic Background Element */}
-      <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity translate-x-4 -translate-y-4">
-        <Heart className="h-28 w-28 text-rose-500 fill-rose-500/20" />
-      </div>
+    <div className="relative rounded-[2.5rem] overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 group transition-all duration-500 shadow-sm hover:shadow-xl">
+      {/* Subtle background decoration */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-zinc-50 dark:bg-zinc-800/20 rounded-bl-full pointer-events-none" />
 
-      <CardHeader className="relative z-10">
-        <div className="flex items-center justify-between">
-          <div className="p-2.5 rounded-xl bg-linear-to-br from-rose-500/20 to-rose-500/10 border border-rose-500/20 shadow-lg shadow-rose-500/10">
-            <Heart className="h-5 w-5 text-rose-500 fill-rose-500" />
-          </div>
-          <div className="flex items-center gap-2">
-             <span className="text-[10px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-500 px-3 py-1 rounded-full border border-rose-500/20">
-              Impact Partner
-            </span>
-          </div>
-        </div>
-        <CardTitle className="mt-6 text-2xl font-black tracking-tight uppercase italic drop-shadow-sm">{charityName}</CardTitle>
-        <CardDescription className="text-muted-foreground font-medium uppercase tracking-tighter opacity-80 mt-1">Your performance directly powers this cause.</CardDescription>
-      </CardHeader>
-
-      <CardContent className="space-y-8 relative z-10">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 space-y-3">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
-              <span>Contribution Level</span>
-              <span className="text-rose-500">{percentage}%</span>
+      <div className="relative z-10 p-8 space-y-8">
+        {/* Header Section */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <div className="p-3 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-lg group-hover:scale-110 transition-transform duration-500">
+                <Heart className="h-6 w-6 fill-current pulse" />
+              </div>
             </div>
-            <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: `${percentage}%` }}
-                className="h-full bg-linear-to-r from-rose-600 via-rose-500 to-rose-400 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.3)]" 
-              />
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 dark:text-zinc-500 mb-1 block">
+                PARTNER CHARITY
+              </span>
+              <h3 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white leading-tight">
+                {charityName}
+              </h3>
             </div>
+          </div>
+          <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
+            <Sparkles className="h-4 w-4 text-primary" />
           </div>
         </div>
 
+        {/* Impact Progress */}
+        <div className="space-y-6">
+          <div className="flex justify-between items-end">
+            <div className="space-y-1">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Monthly Contribution</span>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed font-bold">
+                Direct impact from your membership
+              </p>
+            </div>
+            <div className="flex flex-col items-end">
+              <span className="text-4xl font-black tracking-tighter text-zinc-900 dark:text-white leading-none">
+                {percentage}%
+              </span>
+              <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Guaranteed</span>
+            </div>
+          </div>
+
+          <div className="relative h-2 w-full bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${percentage}%` }}
+              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+              className="h-full bg-primary rounded-full shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]"
+            />
+          </div>
+        </div>
+
+        {/* Data Tiles */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center transition-colors hover:bg-white/10">
-            <Globe className="h-5 w-5 text-sky-400 mb-2 drop-shadow-sm" />
-            <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Reach</span>
-            <span className="text-xs font-black uppercase italic">Worldwide</span>
+          <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800/50 flex flex-col items-center justify-center text-center transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800/60">
+            <Globe className="h-5 w-5 text-zinc-400 mb-3" />
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Global Reach</span>
+            <span className="text-sm font-black text-zinc-900 dark:text-white">Across Africa</span>
           </div>
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center text-center transition-colors hover:bg-white/10">
-            <Award className="h-5 w-5 text-amber-500 mb-2 drop-shadow-sm" />
-            <span className="text-[9px] font-black uppercase tracking-widest opacity-60">Status</span>
-            <span className="text-xs font-black uppercase italic">Verified</span>
+          <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800/50 flex flex-col items-center justify-center text-center transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800/60">
+            <Award className="h-5 w-5 text-primary mb-3" />
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Status</span>
+            <span className="text-sm font-black text-emerald-600 dark:text-emerald-400">Verified ✓</span>
           </div>
         </div>
 
-        <CharitySelectionModal 
-          charities={charities} 
+        {/* Action Button */}
+        <CharitySelectionModal
+          charities={charities}
           currentCharityId={charityId}
           trigger={
-            <Button variant="outline" className="w-full h-14 gap-3 border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 text-rose-500 font-black uppercase tracking-widest group rounded-2xl">
-              Change Charity Partner
-              <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <Button variant="outline" className="w-full h-14 gap-3 border-zinc-200 dark:border-zinc-800 bg-transparent hover:bg-zinc-900 hover:text-white dark:hover:bg-white dark:hover:text-zinc-900 font-black rounded-2xl transition-all duration-500 group/btn text-xs uppercase tracking-[0.2em]">
+              Select Different Charity
+              <ChevronRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
             </Button>
           }
         />
-
-        <div className="flex items-center justify-center gap-2 pt-2 opacity-40">
-           <Lock className="h-3 w-3" />
-           <span className="text-[9px] font-black uppercase tracking-widest">End-to-End Encrypted Transfer</span>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

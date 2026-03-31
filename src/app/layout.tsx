@@ -31,7 +31,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${outfit.variable} font-sans h-full antialiased`}
     >
-      <body suppressHydrationWarning className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-300">
+      <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
+      </head>
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-500">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

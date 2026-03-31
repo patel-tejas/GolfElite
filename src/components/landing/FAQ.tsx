@@ -5,21 +5,25 @@ import { Plus, Minus } from "lucide-react";
 import { useState } from "react";
 
 const faqs = [
-  { 
-    question: "How many draws?", 
-    answer: "One per month. The draw date is typically mid-month and results are announced on your Digital Clubhouse dashboard." 
+  {
+    question: "How does the monthly draw work?",
+    answer: "Once per month, we draw 5 random Stableford score numbers. If your active top-5 scores match any of these (in any order), you win the corresponding tier prize. Results are announced on your dashboard."
   },
-  { 
-    question: "Do I need to play daily?", 
-    answer: "No. You only need 5 scores in your rolling history to be eligible. You can play at your own pace." 
+  {
+    question: "Do I need to play golf every day?",
+    answer: "Not at all. You just need 5 scores in your rolling history to be eligible. Play at your own pace — weekend rounds, occasional games, whatever works for you."
   },
-  { 
-    question: "How do I win?", 
-    answer: "We draw 5 unique Stableford score numbers. If your active 5 scores match any of these (in any order), you win a corresponding tier prize." 
+  {
+    question: "How do charities receive the money?",
+    answer: "A guaranteed minimum of 10% of every subscription goes directly to your selected charity partner. All transactions are transparent and auditable through your dashboard."
   },
-  { 
-    question: "Where does money go?", 
-    answer: "The prize pool receives the majority of membership funds, with a minimum of 10% guaranteed for your chosen charity. The rest covers operational costs." 
+  {
+    question: "Can I change my charity selection?",
+    answer: "Absolutely. You can switch your chosen charity anytime from your dashboard. The change applies from the next billing cycle."
+  },
+  {
+    question: "What happens if I win?",
+    answer: "Winners are notified immediately on their dashboard. Claims are processed within 48 hours, and funds are deposited directly into your linked account."
   },
 ];
 
@@ -27,51 +31,65 @@ export function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-24 bg-black relative border-y border-white/5 items-center">
-      <div className="container mx-auto px-4">
+    <section className="py-28 md:py-36 bg-premium-dark relative overflow-hidden border-y border-white/[0.03]">
+      <div className="container mx-auto px-4 max-w-3xl">
         <div className="text-center mb-16">
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-heading font-black text-white mb-4"
+            className="text-4xl md:text-6xl font-heading font-black text-white mb-4 tracking-tight"
           >
-            Common Questions
+            Questions?{" "}
+            <span className="text-gradient-aurora">Answered.</span>
           </motion.h2>
-          <p className="text-zinc-500 font-medium">Everything you need to know</p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-white/40 font-medium max-w-md mx-auto"
+          >
+            Everything you need to know before getting started.
+          </motion.p>
         </div>
 
-        <div className="max-w-3xl mx-auto space-y-6">
+        <div className="space-y-3">
           {faqs.map((faq, i) => (
-             <motion.div
-               key={i}
-               initial={{ opacity: 0, y: 10 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               transition={{ delay: i * 0.1 }}
-               className="glass-card border-white/5 overflow-hidden"
-             >
-               <button 
-                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                 className="w-full flex items-center justify-between p-8 text-left hover:bg-white/[0.02] transition-colors"
-               >
-                 <span className="text-xl font-bold text-white">{faq.question}</span>
-                 {openIndex === i ? (
-                   <Minus className="w-5 h-5 text-accent" />
-                 ) : (
-                   <Plus className="w-5 h-5 text-accent" />
-                 )}
-               </button>
-               {openIndex === i && (
-                 <motion.div 
-                   initial={{ height: 0, opacity: 0 }}
-                   animate={{ height: "auto", opacity: 1 }}
-                   className="px-8 pb-8 text-zinc-400 font-medium leading-relaxed italic"
-                 >
-                   {faq.answer}
-                 </motion.div>
-               )}
-             </motion.div>
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.06 }}
+              className="rounded-2xl bg-white/[0.02] border border-white/[0.06] overflow-hidden hover:bg-white/[0.04] transition-colors"
+            >
+              <button
+                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                className="w-full flex items-center justify-between p-6 md:p-7 text-left group"
+              >
+                <span className="text-base md:text-lg font-semibold text-white/80 group-hover:text-white transition-colors pr-4">{faq.question}</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 border transition-all duration-300 ${openIndex === i ? 'bg-primary/20 border-primary/30 rotate-0' : 'bg-white/[0.04] border-white/[0.08]'}`}>
+                  {openIndex === i ? (
+                    <Minus className="w-4 h-4 text-primary" />
+                  ) : (
+                    <Plus className="w-4 h-4 text-white/40" />
+                  )}
+                </div>
+              </button>
+              <motion.div
+                initial={false}
+                animate={{
+                  height: openIndex === i ? "auto" : 0,
+                  opacity: openIndex === i ? 1 : 0
+                }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
+                <div className="px-6 md:px-7 pb-6 md:pb-7 text-white/40 font-medium leading-relaxed text-[15px]">
+                  {faq.answer}
+                </div>
+              </motion.div>
+            </motion.div>
           ))}
         </div>
       </div>
