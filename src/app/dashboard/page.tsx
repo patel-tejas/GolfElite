@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server"
 import { signout } from "@/app/(auth)/actions"
 import { getUserScores, getRollingTop5Summary } from "@/utils/scores/queries"
 import { getUpcomingDraws, getUserWinnings } from "@/utils/dashboard/queries"
+import { getCharities } from "@/utils/charities/actions"
 import { Button } from "@/components/ui/button"
 import { Trophy, LogOut, User, Bell } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -34,6 +35,11 @@ export default async function DashboardPage() {
   const summary = await getRollingTop5Summary()
   const upcomingDraws = await getUpcomingDraws()
   const winnings = await getUserWinnings()
+  const { data: allCharities } = await getCharities()
+
+  // Find current charity name if it exists in profile
+  const currentCharityName = profile?.charity_name || "Global Green Initiative"
+  const currentCharityId = profile?.charity_id
 
   return (
     <div className="flex flex-col min-h-screen bg-[url('/grain.png')] bg-repeat selection:bg-primary/30">
@@ -106,8 +112,10 @@ export default async function DashboardPage() {
             
             {/* Charity Section */}
             <CharityImpactCard 
-              charityName={profile?.charity_name} 
-              percentage={profile?.contribution_percentage} 
+              charityName={currentCharityName} 
+              charityId={currentCharityId}
+              percentage={profile?.contribution_percentage || 10} 
+              charities={allCharities || []}
             />
 
             {/* Participation Section */}
