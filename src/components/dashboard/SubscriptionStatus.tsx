@@ -1,9 +1,11 @@
 'use client'
 
+import { useTransition } from 'react'
 import { Card } from '@/components/ui/card'
-import { CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react'
+import { CheckCircle2, AlertCircle, RefreshCw, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { createCheckoutSession, createPortalSession } from '@/utils/stripe/server-actions'
 
 interface SubscriptionStatusProps {
   isSubscribed: boolean
@@ -11,6 +13,19 @@ interface SubscriptionStatusProps {
 }
 
 export function SubscriptionStatus({ isSubscribed, renewalDate = 'May 01, 2026' }: SubscriptionStatusProps) {
+  const [isPending, startTransition] = useTransition()
+
+  const handleClick = () => {
+    startTransition(async () => {
+      if (isSubscribed) {
+        await createPortalSession()
+      } else {
+        const priceId = process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MONTHLY!
+        await createCheckoutSession(priceId)
+      }
+    })
+  }
+
   return (
     <Card className={cn(
       "glass-panel border-none shadow-none bg-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 px-4 sm:px-6 rounded-2xl gap-3 sm:gap-4",
@@ -43,14 +58,19 @@ export function SubscriptionStatus({ isSubscribed, renewalDate = 'May 01, 2026' 
 
       <Button 
         variant="ghost" 
-        size="sm" 
+        size="sm"
+        onClick={handleClick}
+        disabled={isPending}
         className={cn(
           "gap-2 text-[10px] font-black uppercase tracking-tighter h-8 w-full sm:w-auto shrink-0",
           isSubscribed ? "text-primary hover:bg-primary/10" : "text-amber-500 hover:bg-amber-500/10"
         )}
       >
-        <RefreshCw className="h-3 w-3" />
-        {isSubscribed ? 'Manage Billing' : 'Upgrade Now'}
+        {isPending 
+          ? <Loader2 className="h-3 w-3 animate-spin" />
+          : <RefreshCw className="h-3 w-3" />
+        }
+        {isPending ? 'Redirecting...' : isSubscribed ? 'Manage Billing' : 'Upgrade Now'}
       </Button>
     </Card>
   )

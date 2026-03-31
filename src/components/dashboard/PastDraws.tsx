@@ -14,7 +14,7 @@ export function PastDraws({ draws, currentUserId }: { draws: any[], currentUserI
   
   if (!draws || draws.length === 0) {
     return (
-      <Card className="bg-black/40 border-white/5 backdrop-blur-xl">
+      <Card className="bg-white/60 dark:bg-zinc-900/50 border-emerald-900/10 dark:border-white/5 backdrop-blur-xl shadow-xl">
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
           <Trophy className="h-12 w-12 text-emerald-500/20 mb-4" />
           <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">No Past Draws Available</p>
@@ -24,16 +24,16 @@ export function PastDraws({ draws, currentUserId }: { draws: any[], currentUserI
   }
 
   return (
-    <Card className="bg-black/40 border-white/5 backdrop-blur-xl relative overflow-hidden">
+    <Card className="bg-white/60 dark:bg-zinc-900/50 border-emerald-900/10 dark:border-white/5 backdrop-blur-xl shadow-xl relative overflow-hidden w-full">
       <div className="absolute top-0 right-0 p-32 bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none" />
       
       <CardHeader>
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-zinc-900 flex items-center justify-center border border-white/5">
-            <Trophy className="h-5 w-5 text-zinc-400" />
+          <div className="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-zinc-900 flex items-center justify-center border border-emerald-900/10 dark:border-white/5">
+            <Trophy className="h-5 w-5 text-emerald-600 dark:text-zinc-400" />
           </div>
           <div>
-            <CardTitle className="text-xl font-black bg-white bg-clip-text text-transparent uppercase tracking-tight">
+            <CardTitle className="text-xl font-black text-zinc-900 dark:text-white uppercase tracking-tight">
               Draw History
             </CardTitle>
             <CardDescription className="text-zinc-500 uppercase tracking-widest text-[10px] font-bold">
@@ -65,48 +65,48 @@ function DrawRow({ draw, isExpanded, onToggle, currentUserId }: { draw: any, isE
   const currentUserWin = draw.winners?.find((w: any) => w.user_id === currentUserId);
 
   return (
-    <div className="border border-white/5 bg-zinc-950 rounded-xl overflow-hidden transition-all duration-300">
+    <div className="border border-emerald-900/10 dark:border-white/5 bg-white dark:bg-zinc-950 rounded-xl overflow-hidden shadow-sm transition-all duration-300 w-full">
       <div 
         onClick={onToggle}
-        className="p-3 sm:p-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-white/5 transition-colors"
+        className="p-3 sm:p-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-zinc-50 dark:hover:bg-white/5 transition-colors w-full"
       >
         <div className="min-w-0 flex-1">
-          <h4 className="font-bold text-white tracking-wider sm:tracking-widest uppercase text-xs sm:text-sm truncate">{draw.title}</h4>
+          <h4 className="font-bold text-zinc-900 dark:text-white tracking-wider sm:tracking-widest uppercase text-xs sm:text-sm truncate block max-w-full">{draw.title}</h4>
           <p className="text-xs text-zinc-500">{draw.draw_date ? format(new Date(draw.draw_date), 'MMM d, yyyy') : 'No Date'}</p>
         </div>
         <div className="flex items-center gap-2 sm:gap-4 shrink-0">
            {currentUserWin && (
-             <Badge className="bg-amber-500 text-black border-none uppercase text-[9px] font-black tracking-wider sm:tracking-widest hidden xs:inline-flex">
+             <div className="bg-amber-500 text-black px-2 py-0.5 rounded uppercase text-[9px] font-black tracking-wider sm:tracking-widest hidden xs:inline-flex shrink-0">
                 You Won!
-             </Badge>
+             </div>
            )}
            <div className="text-right hidden sm:block">
               <p className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Prize Pool</p>
-              <p className="text-emerald-400 font-bold uppercase">£{draw.prize_pool || 0}</p>
+              <p className="text-emerald-600 dark:text-emerald-400 font-bold uppercase">£{draw.prize_pool || 0}</p>
            </div>
            {isExpanded ? <ChevronUp className="h-4 w-4 text-zinc-500 shrink-0" /> : <ChevronDown className="h-4 w-4 text-zinc-500 shrink-0" />}
         </div>
       </div>
       
       {isExpanded && (
-        <div className="p-3 sm:p-4 border-t border-white/5 bg-black/20 space-y-4 sm:space-y-6">
+        <div className="p-3 sm:p-4 border-t border-emerald-900/10 dark:border-white/5 bg-zinc-50/50 dark:bg-black/20 space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
           
           {/* Prize Pool - visible on mobile when expanded */}
-          <div className="sm:hidden flex items-center justify-between">
+          <div className="sm:hidden flex items-center justify-between min-w-0 w-full">
             <span className="text-[10px] text-zinc-500 uppercase tracking-widest font-bold">Prize Pool</span>
-            <span className="text-emerald-400 font-bold uppercase">£{draw.prize_pool || 0}</span>
+            <span className="text-emerald-600 dark:text-emerald-400 font-bold uppercase">£{draw.prize_pool || 0}</span>
           </div>
 
           {/* Lucky Numbers Display */}
           {draw.lucky_numbers && draw.lucky_numbers.length > 0 && (
-            <div>
-              <p className="text-[10px] font-black tracking-[0.15em] sm:tracking-[0.2em] text-emerald-500 uppercase mb-3 flex items-center gap-2">
+            <div className="min-w-0">
+              <p className="text-[10px] font-black tracking-[0.15em] sm:tracking-[0.2em] text-emerald-600 dark:text-emerald-500 uppercase mb-3 flex items-center gap-2">
                 <CheckCircle2 className="h-3 w-3 shrink-0" />
                 Winning Numbers
               </p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 w-full">
                 {draw.lucky_numbers.map((num: number, i: number) => (
-                  <div key={i} className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg outline outline-emerald-500/30 bg-emerald-500/10 flex items-center justify-center text-emerald-400 font-bold text-[10px] sm:text-xs">
+                  <div key={i} className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg outline outline-emerald-500/30 bg-emerald-500/10 flex items-center justify-center text-emerald-700 dark:text-emerald-400 font-bold text-[10px] sm:text-xs shrink-0">
                     {num}
                   </div>
                 ))}
@@ -120,29 +120,29 @@ function DrawRow({ draw, isExpanded, onToggle, currentUserId }: { draw: any, isE
           )}
 
           {/* All Winners List */}
-          <div>
-            <p className="text-[10px] font-black tracking-[0.2em] text-zinc-400 uppercase mb-3 flex items-center gap-2">
+          <div className="min-w-0 w-full">
+            <p className="text-[10px] font-black tracking-[0.2em] text-zinc-500 dark:text-zinc-400 uppercase mb-3 flex items-center gap-2">
               <Trophy className="h-3 w-3" />
               Winners List
             </p>
             {hasWinners ? (
-              <div className="space-y-2">
+              <div className="space-y-2 w-full min-w-0">
                 {draw.winners.map((w: any) => (
-                  <div key={w.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-2.5 sm:p-3 bg-white/5 border border-white/5 rounded-xl text-sm gap-2 sm:gap-3 w-full overflow-hidden">
-                     <div className="flex items-center gap-2 sm:gap-3 min-w-0 w-full flex-1">
-                        <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-zinc-800 flex items-center justify-center shrink-0">
-                           <Trophy className="h-3 w-3 text-zinc-500" />
+                  <div key={w.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-white dark:bg-white/5 border border-emerald-900/10 dark:border-white/5 shadow-sm dark:shadow-none rounded-xl text-sm gap-3 w-full overflow-hidden min-w-0">
+                     <div className="flex items-center gap-3 min-w-0 w-full flex-1">
+                        <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-emerald-50 dark:bg-zinc-800 flex items-center justify-center shrink-0">
+                           <Trophy className="h-3 w-3 text-emerald-600 dark:text-zinc-500" />
                         </div>
-                        <div className="min-w-0 flex-1">
-                           <p className="text-white font-bold text-xs sm:text-sm truncate w-full">{w.profiles?.full_name || w.profiles?.email || 'Anonymous'}</p>
-                           <p className="text-[10px] sm:text-xs text-zinc-500 font-mono tracking-wider sm:tracking-widest mt-0.5 truncate w-full">Matched: {w.matched_numbers?.join(', ') || 'N/A'}</p>
+                        <div className="min-w-0 flex-1 w-full overflow-hidden">
+                           <p className="text-zinc-900 dark:text-white font-bold text-xs sm:text-sm truncate block max-w-full">{w.profiles?.full_name || w.profiles?.email || 'Anonymous'}</p>
+                           <p className="text-[10px] sm:text-xs text-zinc-500 font-mono tracking-wider sm:tracking-widest mt-0.5 truncate block max-w-full">Matched: {w.matched_numbers?.join(', ') || 'N/A'}</p>
                         </div>
                      </div>
-                     <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 pl-9 sm:pl-0 shrink-0">
-                        <p className="text-emerald-400 font-black italic text-sm">£{w.prize_amount}</p>
-                        <Badge className={`${w.payment_status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-500'} border-none uppercase text-[9px] font-black tracking-wider sm:tracking-widest`}>
+                     <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2 shrink-0 sm:pl-0 w-full sm:w-auto mt-1 sm:mt-0">
+                        <p className="text-emerald-600 dark:text-emerald-400 font-black italic text-sm">£{w.prize_amount}</p>
+                        <div className={`${w.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-500'} px-2 py-0.5 rounded text-[9px] font-black tracking-widest uppercase shrink-0`}>
                            {w.payment_status}
-                        </Badge>
+                        </div>
                      </div>
                   </div>
                 ))}
@@ -199,10 +199,10 @@ function ClaimSection({ win }: { win: any }) {
           
           {win.payment_status === 'pending' && (
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <label className="cursor-pointer w-full sm:w-auto">
-                <div className="flex items-center justify-center sm:justify-start gap-2 bg-black/50 hover:bg-black/70 border border-amber-500/30 px-4 py-2 rounded-lg text-xs font-bold text-amber-500 transition-colors uppercase tracking-widest w-full">
+              <label className="cursor-pointer w-full sm:w-auto block flex-1 min-w-0">
+                <div className="flex items-center justify-center sm:justify-start gap-2 bg-black/50 hover:bg-black/70 border border-amber-500/30 px-4 py-2 rounded-lg text-xs font-bold text-amber-500 transition-colors uppercase tracking-widest w-full min-w-0">
                   <ImageIcon className="h-4 w-4 shrink-0" />
-                  <span className="truncate max-w-[200px]">{file ? file.name : 'Select Image'}</span>
+                  <span className="truncate flex-1 min-w-0">{file ? file.name : 'Select Image'}</span>
                 </div>
                 <input 
                   type="file" 
@@ -224,21 +224,21 @@ function ClaimSection({ win }: { win: any }) {
           )}
           
           {win.payment_status === 'claimed' && (
-            <Badge className="bg-amber-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1 border-none shadow-lg shadow-amber-500/20 whitespace-normal h-auto text-center">
+            <div className="bg-amber-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1.5 px-3 rounded-full shadow-lg shadow-amber-500/20 text-center text-[10px] sm:text-xs">
               Proof Submitted &bull; Awaiting Review
-            </Badge>
+            </div>
           )}
 
           {win.payment_status === 'verified' && (
-            <Badge className="bg-emerald-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1 border-none shadow-lg shadow-emerald-500/20 whitespace-normal h-auto text-center">
+            <div className="bg-emerald-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1.5 px-3 rounded-full shadow-lg shadow-emerald-500/20 text-center text-[10px] sm:text-xs">
               Verified &bull; Ready for Payout
-            </Badge>
+            </div>
           )}
 
           {win.payment_status === 'paid' && (
-            <Badge className="bg-emerald-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1 border-none shadow-lg shadow-emerald-500/20 whitespace-normal h-auto text-center">
+             <div className="bg-emerald-500 text-black font-black uppercase tracking-wider sm:tracking-widest py-1.5 px-3 rounded-full shadow-lg shadow-emerald-500/20 text-center text-[10px] sm:text-xs inline-block">
               Paid
-            </Badge>
+            </div>
           )}
         </div>
         
