@@ -95,4 +95,3 @@ export function WinningsBanner({ totalWon = 0, currentBalance = 0, status = 'non
     </motion.div>
   )
 }
-}

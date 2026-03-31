@@ -22,105 +22,98 @@ export function ScoreBallGrid({ scores, average, needed, onEdit }: ScoreBallGrid
   const displayScores = Array.from({ length: 5 }, (_, i) => scores[i] || null)
 
   return (
-    <section className="w-full bg-zinc-50 dark:bg-zinc-950/50 rounded-[2.5rem] p-8 md:p-12 border border-zinc-200 dark:border-zinc-800 shadow-sm">
+    <section className="w-full bg-white dark:bg-zinc-950 rounded-[2.5rem] p-8 md:p-12 border border-zinc-200 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+      {/* Background Subtle Texture/Grid */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+        style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #000 1px, transparent 0)', backgroundSize: '40px 40px' }} 
+      />
+
       {/* Header Area */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-zinc-400 dark:text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px]">
-            <Trophy className="h-3 w-3" />
-            Performance Index
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-16 relative z-10">
+        <div className="space-y-4">
+          <div className="text-[11px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.3em]">
+            Performance Profile
           </div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-white">
-            Rolling <span className="text-primary font-black">Top 5</span> Scores
-          </h2>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-md">
-            Your entry probability is calculated from your top 5 most recent verified rounds.
-          </p>
+          <div className="flex items-baseline gap-4">
+            <h2 className="text-7xl font-black tracking-tighter text-orange-500 dark:text-orange-400">
+              {average.toFixed(1)}
+            </h2>
+            <span className="text-[11px] font-black text-zinc-500 dark:text-zinc-400 uppercase tracking-[0.2em] pb-2">
+              Rolling Avg
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-8 bg-white dark:bg-zinc-900 p-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <div className="text-center">
-            <div className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Current Index</div>
-            <div className="text-3xl font-black text-zinc-900 dark:text-white">{average.toFixed(1)}</div>
+        {needed > 0 && (
+          <div className="px-4 py-2 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/30 rounded-full">
+            <span className="text-[10px] font-black text-orange-600 dark:text-orange-400 uppercase tracking-widest leading-none">
+              Needs {needed} More Rounds
+            </span>
           </div>
-          <div className="w-px h-10 bg-zinc-200 dark:border-zinc-800" />
-          <div className="text-center">
-            <div className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest mb-1">Rounds Needed</div>
-            <div className="text-3xl font-black text-primary">{needed}</div>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Pure Image Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-10">
+      {/* Golf Ball Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12 relative z-10">
         {displayScores.map((score, index) => (
           <motion.div
             key={score?.id || `empty-${index}`}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.05 }}
-            className="group relative aspect-square"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className="flex flex-col items-center gap-6"
           >
-            {/* The Golf Ball Container - Edge to Edge Image */}
-            <div className={`relative w-full h-full rounded-full overflow-hidden transition-all duration-500 ${
-              score ? 'cursor-pointer shadow-2xl hover:scale-105' : 'bg-zinc-200 dark:bg-zinc-900/50 border-2 border-dashed border-zinc-300 dark:border-zinc-800'
-            }`}>
+            {/* The Golf Ball */}
+            <div 
+              onClick={() => score && onEdit?.(score)}
+              className={`group relative w-full aspect-square rounded-full transition-all duration-500 ${
+                score 
+                  ? 'cursor-pointer hover:scale-110 active:scale-95' 
+                  : 'bg-zinc-100/50 dark:bg-zinc-900/50 border border-dashed border-zinc-200 dark:border-zinc-800'
+              }`}
+            >
               {score ? (
                 <>
-                  <Image
-                    src="/assets/golf-ball.png"
-                    alt="Golf Ball"
-                    fill
-                    loading="eager"
-                    className="object-cover transition-all duration-500 group-hover:blur-[4px] group-hover:brightness-50"
-                  />
-                  
-                  {/* Score Overlay */}
-                  <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-300 group-hover:opacity-0">
-                    <span className="text-5xl md:text-6xl font-black text-black drop-shadow-[0_2px_10px_rgba(255,255,255,0.8)] tracking-tighter">
+                  <div className="absolute -bottom-2 inset-x-4 h-4 bg-black/5 blur-xl rounded-full" />
+                  <div className="absolute inset-0 bg-white dark:bg-zinc-100 rounded-full shadow-[inset_-4px_-4px_12px_rgba(0,0,0,0.05),inset_4px_4px_12px_rgba(255,255,255,0.8),0_10px_30px_rgba(0,0,0,0.1)] flex items-center justify-center overflow-hidden border border-zinc-200/50">
+                    <div className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+                      style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #000 0.5px, transparent 0)', backgroundSize: '6px 6px' }} 
+                    />
+                    <span className="relative z-10 text-4xl md:text-5xl font-black text-zinc-900 tracking-tight leading-none">
                       {score.score}
                     </span>
-                  </div>
-
-                  {/* Hover Interaction */}
-                  <div 
-                    onClick={() => onEdit?.(score)}
-                    className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
-                  >
-                    <div className="p-4 rounded-full bg-primary text-black transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 shadow-xl">
-                      <Pencil className="h-6 w-6 stroke-[2.5px]" />
+                    <div className="absolute inset-0 bg-zinc-900/80 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
+                      <Pencil className="h-6 w-6 text-white" />
                     </div>
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center h-full opacity-30">
-                  <HelpCircle className="h-8 w-8 mb-2" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest">Score {index + 1}</span>
+                <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">?</span>
                 </div>
               )}
             </div>
 
-            {/* Date Label */}
-            {score && (
-              <div className="mt-4 text-center">
-                <div className="text-[10px] font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] mb-0.5">
-                  #{index + 1} Round
-                </div>
-                <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+            {/* Date Pill */}
+            {score ? (
+              <div className="px-5 py-1.5 bg-zinc-900 dark:bg-zinc-800 rounded-full shadow-lg transform transition-transform group-hover:translate-y-1">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest whitespace-nowrap">
                   {new Date(score.played_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
-                </div>
+                </span>
+              </div>
+            ) : (
+              <div className="px-5 py-1.5 bg-zinc-100 dark:bg-zinc-900/50 rounded-full border border-zinc-200 dark:border-zinc-800">
+                <span className="text-[10px] font-bold text-zinc-300 dark:text-zinc-600 uppercase tracking-widest">
+                  TBD
+                </span>
               </div>
             )}
           </motion.div>
         ))}
       </div>
 
-      {/* Footer Action */}
-      <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
-        <button className="px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl">
-          Enter New Match Score
-        </button>
-      </div>
+      {/* Subtle Bottom Glow */}
+      <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-orange-500/5 blur-[100px] rounded-full pointer-events-none" />
     </section>
   )
 }
