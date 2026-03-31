@@ -74,5 +74,7 @@ A subscription-based web application that combines golf performance tracking, mo
 ### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/your-username/golf-charity-platform.git
-cd golf-charity-platform
+git clone https://github.com/patel-tejas/GolfElite.git
+cd GolfElite
+npm i
+npm run dev
