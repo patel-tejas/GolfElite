@@ -1,5 +1,5 @@
 import { login, signup } from "../actions"
-import { Button } from "@/components/ui/button"
+import { SubmitButton } from "@/components/auth/SubmitButton"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -68,9 +68,9 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
             </CardContent>
             
             <CardFooter className="flex flex-col gap-4">
-              <Button type="submit" formAction={login} className="w-full btn-premium">
+              <SubmitButton formAction={login} className="w-full btn-premium">
                 Enter the Clubhouse
-              </Button>
+              </SubmitButton>
               
               <div className="text-center text-sm text-muted-foreground">
                 Don't have an account?{" "}
