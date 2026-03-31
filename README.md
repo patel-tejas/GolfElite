@@ -5,6 +5,23 @@ A subscription-based web application that combines golf performance tracking, mo
 > Play golf → Enter scores → Win rewards → Support charity ❤️
 
 ---
+## 🖼️ Preview
+
+### 🏠 Hero Section
+![Hero](./public/assets/hero1.png)
+
+---
+
+### 📊 User Dashboard
+![Dashboard](./public/assets/dashboard.png)
+
+---
+
+### 🎲 Draw Simulation (Admin)
+![Simulation](./public/assets/simulate.png)
+
+---
+
 
 ## 🚀 Features
 
