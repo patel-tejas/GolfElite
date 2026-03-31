@@ -8,7 +8,6 @@ export function DrawDemo() {
   const [activeStep, setActiveStep] = useState(0);
   const myScores = [32, 28, 35, 30, 25];
   const drawNumbers = [10, 18, 25, 30, 40];
-  const matches = [false, false, true, true, false];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -40,7 +39,7 @@ export function DrawDemo() {
               {myScores.map((score, i) => (
                 <div key={i} className="flex flex-col items-center gap-3">
                   <motion.div 
-                    animate={activeStep > i && matches[i] ? { scale: 1.1, borderColor: "var(--color-accent)" } : {}}
+                    animate={drawNumbers.slice(0, activeStep).includes(score) ? { scale: 1.1, borderColor: "var(--color-accent)" } : { scale: 1, borderColor: "rgba(255,255,255,0.1)" }}
                     className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-white/5 border-2 border-white/10 flex items-center justify-center font-heading font-black text-lg sm:text-2xl text-white shadow-2xl transition-colors duration-500"
                   >
                     {score}
@@ -74,9 +73,9 @@ export function DrawDemo() {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
-                        className={`text-sm font-black uppercase tracking-tighter sm:text-xs flex items-center gap-1 ${matches[i] ? "text-green-400" : "text-zinc-600"}`}
+                        className={`text-sm font-black uppercase tracking-tighter sm:text-xs flex items-center gap-1 ${myScores.includes(num) ? "text-green-400" : "text-zinc-600"}`}
                       >
-                        {matches[i] ? (
+                        {myScores.includes(num) ? (
                           <>
                             <Check className="w-4 h-4" /> Match!
                           </>
