@@ -1,13 +1,14 @@
 import { createClient } from "@/utils/supabase/server"
 import { signout } from "@/app/(auth)/actions"
 import { getUserScores, getRollingTop5Summary } from "@/utils/scores/queries"
-import { getUpcomingDraws, getUserWinnings } from "@/utils/dashboard/queries"
+import { getUpcomingDraws, getUserWinnings, getPastDraws } from "@/utils/dashboard/queries"
 import { getCharities } from "@/utils/charities/actions"
 import { Button } from "@/components/ui/button"
 import { Trophy, LogOut, User, Bell } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle"
 import { CharityImpactCard } from "@/components/dashboard/CharityImpactCard"
 import { ParticipationSummary } from "@/components/dashboard/ParticipationSummary"
+import { PastDraws } from "@/components/dashboard/PastDraws"
 import { WinningsBanner } from "@/components/dashboard/WinningsBanner"
 import { SubscriptionStatus } from "@/components/dashboard/SubscriptionStatus"
 import { ScoreManagement } from "@/components/dashboard/ScoreManagement"
@@ -34,6 +35,7 @@ export default async function DashboardPage() {
   const scores = await getUserScores()
   const summary = await getRollingTop5Summary()
   const upcomingDraws = await getUpcomingDraws()
+  const pastDraws = await getPastDraws()
   const winnings = await getUserWinnings()
   const { data: allCharities } = await getCharities()
 
@@ -105,6 +107,9 @@ export default async function DashboardPage() {
               needed={summary?.needed || 5}
               isSubscribed={isSubscribed}
             />
+
+            {/* Past Draws Section */}
+            <PastDraws draws={pastDraws} currentUserId={user?.id as string} />
           </div>
 
           {/* Right Column (4 units) */}
@@ -120,12 +125,12 @@ export default async function DashboardPage() {
 
             {/* Participation Section */}
             <ParticipationSummary 
-              draws={upcomingDraws.map(d => ({
+              draws={upcomingDraws.map((d: any) => ({
                 id: d.id,
                 title: d.title,
-                date: new Date(d.draw_date).toLocaleDateString(),
-                prize: `$${d.prize_pool.toLocaleString()}`,
-                status: 'upcoming'
+                date: d.draw_date ? new Date(d.draw_date).toLocaleDateString() : 'TBD',
+                prize: `£${Number(d.prize_pool || 0).toLocaleString()}`,
+                status: d.is_entered ? 'entered' : 'upcoming'
               }))} 
             />
 

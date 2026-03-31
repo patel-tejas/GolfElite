@@ -2,19 +2,34 @@ import { createClient } from '@/utils/supabase/server'
 
 export async function getUpcomingDraws() {
   const supabase = await createClient()
-  const { data, error } = await supabase
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { data: draws, error: drawError } = await supabase
     .from('draws')
     .select('*')
     .eq('status', 'upcoming')
     .order('draw_date', { ascending: true })
     .limit(5)
 
-  if (error) {
-    console.error('Error fetching draws:', error)
+  if (drawError) {
+    console.error('Error fetching draws:', drawError)
     return []
   }
 
-  return data
+  // Fetch current user's entries to determine "entered" status
+  let userEntries: string[] = []
+  if (user) {
+    const { data: entries } = await supabase
+      .from('draw_entries')
+      .select('draw_id')
+      .eq('user_id', user.id)
+    userEntries = entries?.map(e => e.draw_id) || []
+  }
+
+  return (draws || []).map(draw => ({
+    ...draw,
+    is_entered: userEntries.includes(draw.id)
+  }))
 }
 
 export async function getUserWinnings() {
@@ -41,4 +56,37 @@ export async function getUserWinnings() {
     balance,
     status: pending.length > 0 ? 'pending' : (data.length > 0 ? 'paid' : 'none')
   }
+}
+
+export async function getPastDraws() {
+  const supabase = await createClient()
+
+  const { data: draws, error: drawError } = await supabase
+    .from('draws')
+    .select(`
+      *,
+      winners (
+        id,
+        user_id,
+        prize_amount,
+        payment_status,
+        matched_numbers,
+        user_numbers,
+        proof_image_url,
+        profiles (
+          full_name,
+          email
+        )
+      )
+    `)
+    .eq('status', 'completed')
+    .order('draw_date', { ascending: false })
+    .limit(10)
+
+  if (drawError) {
+    console.error('Error fetching past draws:', drawError)
+    return []
+  }
+
+  return draws || []
 }
